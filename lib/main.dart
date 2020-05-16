@@ -1,5 +1,3 @@
-import 'package:canvas/geometricspiro.dart';
-import 'package:canvas/ripple.dart';
 import 'package:canvas/whiteboard.dart';
 import 'package:flutter/material.dart';
 
