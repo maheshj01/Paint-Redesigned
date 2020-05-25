@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:canvas/appbar.dart';
+import 'package:canvas/cursor.dart';
 import 'package:canvas/dotpainter.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -31,14 +32,14 @@ class _WhiteBoardState extends State<WhiteBoard>
 
   Color pickerColor = Colors.black;
   BlendMode blendMode = BlendMode.softLight;
-  double _sliderValue = 10.0;
+  double _sliderMin = 5.0;
+  double _sliderMax = 50.0;
+  double _sliderValue = 5.0;
   AnimationController _controller;
   Animation<double> animation;
-  bool isShown = false;
+  List<Offset> localList = [];
   @override
   Widget build(BuildContext context) {
-    List<Offset> localList = [];
-    // List<Offset> oldList = [];
     return Scaffold(
       appBar: AppBarWidget(
         selectedColor: pickerColor,
@@ -54,26 +55,13 @@ class _WhiteBoardState extends State<WhiteBoard>
                       showLabel: true,
                       pickerAreaHeightPercent: 0.8,
                     ),
-                    // Use Material color picker:
-                    //
-                    // child: MaterialPicker(
-                    //   pickerColor: pickerColor,
-                    //   onColorChanged: changeColor,
-                    //   showLabel: true, // only on portrait mode
-                    // ),
-                    //
-                    // Use Block color picker:
-                    //
-                    // child: BlockPicker(
-                    //   pickerColor: currentColor,
-                    //   onColorChanged: changeColor,
-                    // ),
                   )));
         },
         onEraserTapped: () {
           setState(() {
-            blendMode = BlendMode.clear;
+            localList = [];
           });
+          offSetController.offset.sink.add(localList);
         },
         onPenTapped: () {
           _controller.forward();
@@ -90,27 +78,25 @@ class _WhiteBoardState extends State<WhiteBoard>
           children: <Widget>[
             GestureDetector(
               onPanStart: (startDetails) {
-                // oldList = localList;
                 final renderBox = context.findRenderObject() as RenderBox;
                 final localPosition =
                     renderBox.globalToLocal(startDetails.globalPosition);
                 localList.add(localPosition);
-                offSetController.offsetController.sink.add(localList);
-                // print(startDetails.globalPosition.dx);
+                offSetController.offset.sink.add(localList);
               },
               onPanUpdate: (updateDetails) {
                 final renderBox = context.findRenderObject() as RenderBox;
                 final localPosition =
                     renderBox.globalToLocal(updateDetails.globalPosition);
                 localList.add(localPosition);
-                offSetController.offsetController.sink.add(localList);
+                offSetController.offset.sink.add(localList);
               },
               onPanEnd: (downDetails) {
                 localList.add(null);
-                offSetController.offsetController.sink.add(localList);
+                offSetController.offset.sink.add(localList);
               },
               child: StreamBuilder<List<Offset>>(
-                  stream: offSetController.offsetController.stream,
+                  stream: offSetController.offset.stream,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Offset>> snapshot) {
                     return snapshot.data == null
@@ -119,20 +105,21 @@ class _WhiteBoardState extends State<WhiteBoard>
                             alignment: Alignment.center,
                             child: Container(child: Text('Tap to Start')),
                           )
-                        : CustomPaint(
-                            painter: WhiteBoardPainter(
-                                offsetList: snapshot.data,
-                                color: pickerColor,
-                                strokeWidth: _sliderValue,
-                                blendMode: blendMode),
-                            child: Container(),
+                        : Cursor(
+                            cursorStyle: Cursor.crosshair,
+                            child: CustomPaint(
+                              painter: WhiteBoardPainter(
+                                  offsetList: snapshot.data,
+                                  color: pickerColor,
+                                  strokeWidth: _sliderValue,
+                                  blendMode: blendMode),
+                              child: Container(),
+                            ),
                           );
                   }),
             ),
-            Container(
-              child: CustomPaint(
-                painter: DotPainter(),
-              ),
+            CustomPaint(
+              painter: DotPainter(),
             ),
             Align(
               alignment: Alignment.topRight,
@@ -150,12 +137,12 @@ class _WhiteBoardState extends State<WhiteBoard>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text('Pointer Size:'),
+                      Text('Pointer Size:  '),
                       Text(_sliderValue.toStringAsPrecision(2)),
                       Slider(
                           value: _sliderValue,
-                          min: 10,
-                          max: 40,
+                          min: _sliderMin,
+                          max: _sliderMax,
                           label: 'Size',
                           onChanged: (value) {
                             setState(() {
@@ -171,9 +158,9 @@ class _WhiteBoardState extends State<WhiteBoard>
                           width: _sliderValue,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                              color: Colors.red,
+                              color: Colors.white,
                               borderRadius:
-                                  BorderRadius.circular(_sliderValue * 20)),
+                                  BorderRadius.circular(_sliderValue)),
                         ),
                       )
                     ],
@@ -254,10 +241,10 @@ class WhiteBoardPainter extends CustomPainter {
 }
 
 class OffSetController {
-  final offsetController = StreamController<List<Offset>>.broadcast();
+  final offset = StreamController<List<Offset>>.broadcast();
 
   void dispose() {
-    offsetController.close();
+    offset.close();
   }
 }
 
