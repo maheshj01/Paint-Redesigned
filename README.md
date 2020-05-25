@@ -1,6 +1,12 @@
 # canvas
 
-A new Flutter project.
+A Work in Progress WhiteBoard built with flutter 
+
+## Update #1 
+
+![ezgif com-video-to-gif (1)](https://user-images.githubusercontent.com/31410839/82818971-36958e80-9ebd-11ea-91e3-f1b556a7901c.gif)
+
+
 
 ## Getting Started
 
