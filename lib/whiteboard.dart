@@ -5,7 +5,6 @@ import 'package:canvas/appbar.dart';
 import 'package:canvas/cursor.dart';
 import 'package:canvas/dotpainter.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -38,11 +37,35 @@ class _WhiteBoardState extends State<WhiteBoard>
   AnimationController _controller;
   Animation<double> animation;
   List<Offset> localList = [];
+  List<List<Offset>> globalList = [];
+  List<List<Offset>> removedList = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
         selectedColor: pickerColor,
+        onUndo: () {
+          localList = [];
+          if (globalList.length > 0) {
+            removedList.add(globalList.removeLast());
+            for (int i = 0; i < globalList.length; i++) {
+              for (int j = 0; j < globalList[i].length; j++) {
+                localList.add(globalList[i][j]);
+              }
+            }
+            print('localist = ${localList.length}');
+            offSetController.offset.sink.add(localList);
+          }
+        },
+        onRedo: () {
+          for (int i = 0; i < removedList.length; i++) {
+            for (int j = 0; j < removedList[i].length; j++) {
+              localList.add(removedList[i][j]);
+            }
+          }
+          print('localist = ${localList.length}');
+          offSetController.offset.sink.add(localList);
+        },
         onColorTapped: () {
           showDialog(
               context: context,
@@ -60,6 +83,8 @@ class _WhiteBoardState extends State<WhiteBoard>
         onEraserTapped: () {
           setState(() {
             localList = [];
+            globalList = [];
+            removedList = [];
           });
           offSetController.offset.sink.add(localList);
         },
@@ -94,6 +119,8 @@ class _WhiteBoardState extends State<WhiteBoard>
               onPanEnd: (downDetails) {
                 localList.add(null);
                 offSetController.offset.sink.add(localList);
+                globalList.add(localList);
+                print(globalList);
               },
               child: StreamBuilder<List<Offset>>(
                   stream: offSetController.offset.stream,

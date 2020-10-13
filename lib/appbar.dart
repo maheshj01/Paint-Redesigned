@@ -9,6 +9,8 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   Function onPenTapped;
   Function onEraserTapped;
   Function onColorTapped;
+  final Function onUndo;
+  final Function onRedo;
   final BuildContext context;
   final List<Widget> actions;
 
@@ -25,7 +27,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
       this.onColorTapped,
       this.selectedColor,
       this.onEraserTapped,
-      this.onPenTapped})
+      this.onPenTapped, this.onUndo, this.onRedo})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -46,24 +48,26 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
                             Icons.undo,
                             color: Colors.white,
                           ),
-                          onPressed: () {
-                            List<Offset> newList = [];
-                            if (snapshot.data != null) {
-                              List<Offset> offsetList = [];
-                              offsetList = snapshot.data;
-                              for (int i = 0; i < offsetList.length - 1; i++) {
-                                newList.add(offsetList[i]);
-                              }
-                            }
-                            offSetController.offset.sink.add(newList);
-                            print('undo');
-                          }),
+                          onPressed: onUndo
+                          // () {
+                          //   List<Offset> newList = [];
+                          //   if (snapshot.data != null) {
+                          //     List<Offset> offsetList = [];
+                          //     offsetList = snapshot.data;
+                          //     for (int i = 0; i < offsetList.length - 1; i++) {
+                          //       newList.add(offsetList[i]);
+                          //     }
+                          //   }
+                          //   offSetController.offset.sink.add(newList);
+                          //   print('undo');
+                          // }
+                          ),
                       IconButton(
                           icon: Icon(
                             Icons.redo,
                             color: Colors.white,
                           ),
-                          onPressed: () {}),
+                          onPressed: onRedo),
                     ],
                   ),
                 ),
