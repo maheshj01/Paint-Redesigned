@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
+/// Dots to show on the Cnavas to help
+/// draw shapes
 class DotPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {

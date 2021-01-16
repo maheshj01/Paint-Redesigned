@@ -1,6 +1,8 @@
 import 'package:canvas/cursor.dart';
+import 'package:canvas/point.dart';
 import 'package:canvas/whiteboard.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   final String title;
@@ -11,6 +13,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   Function onColorTapped;
   final BuildContext context;
   final List<Widget> actions;
+  int totalPoints = 0; // multiples of 100
 
   Widget colorBoxWidget() {
     return Container(color: selectedColor, width: 35, height: 35);
@@ -29,9 +32,14 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Offset>>(
-        stream: offSetController.offset.stream,
-        builder: (BuildContext context, AsyncSnapshot<List<Offset>> snapshot) {
+    final store = Provider.of<Point>(
+      context,
+      listen: false,
+    );
+
+    return StreamBuilder<List<Point>>(
+        stream: points.controller.stream,
+        builder: (BuildContext context, AsyncSnapshot<List<Point>> snapshot) {
           return Container(
             color: Colors.blueAccent,
             child: Row(
@@ -47,23 +55,29 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
                             color: Colors.white,
                           ),
                           onPressed: () {
-                            List<Offset> newList = [];
+                            List<Point> newList = [];
                             if (snapshot.data != null) {
-                              List<Offset> offsetList = [];
-                              offsetList = snapshot.data;
-                              for (int i = 0; i < offsetList.length - 1; i++) {
-                                newList.add(offsetList[i]);
+                              List<Point> pointsList = [];
+                              pointsList = snapshot.data;
+                              for (int i = 0;
+                                  i < pointsList.length - 100;
+                                  i++) {
+                                newList.add(pointsList[i]);
                               }
                             }
-                            offSetController.offset.sink.add(newList);
-                            print('undo');
+                            points.controller.sink.add(newList);
                           }),
                       IconButton(
                           icon: Icon(
                             Icons.redo,
                             color: Colors.white,
                           ),
-                          onPressed: () {}),
+                          onPressed: () {
+                            final List<Point> totalPoints = store.points;
+                            for (int i = 0; i < 100; i++) {
+                              
+                            }
+                          }),
                     ],
                   ),
                 ),

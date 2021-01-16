@@ -5,9 +5,11 @@ import 'package:canvas/appbar.dart';
 import 'package:canvas/cursor.dart';
 import 'package:canvas/dotpainter.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:provider/provider.dart';
+
+import 'point.dart';
 
 class WhiteBoard extends StatefulWidget {
   @override
@@ -24,53 +26,119 @@ class _WhiteBoardState extends State<WhiteBoard>
         AnimationController(duration: Duration(milliseconds: 500), vsync: this)
           ..addListener(() => setState(() {}));
     animation = Tween(begin: -200.0, end: 0.0).animate(_controller);
+    paint = Paint();
   }
 
   void changeColor(Color color) {
     setState(() => pickerColor = color);
   }
 
+  void onPenTapped() {
+    if (_controller.status == AnimationStatus.completed) {
+      _controller.reverse();
+      return;
+    }
+    _controller.forward();
+    return;
+  }
+
+  double paintSize() {
+    if (_sliderValue < 3)
+      return _sliderValue * 3;
+    else if (_sliderValue < 8) return _sliderValue * 2;
+    if (_sliderValue <= 10) return _sliderValue * 1.5;
+  }
+
+  Widget _topPaintBar() {
+    return Align(
+      alignment: Alignment.topRight,
+      child: Transform.translate(
+        offset: Offset(
+          0,
+          animation.value,
+        ),
+        child: Container(
+          padding: EdgeInsets.all(20),
+          height: 100,
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.15),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text('Pointer Size:  '),
+              Text(_sliderValue.toInt().toString()),
+              Slider(
+                  value: _sliderValue,
+                  min: _sliderMin,
+                  max: _sliderMax,
+                  label: 'Size',
+                  onChanged: (value) {
+                    setState(() {
+                      _sliderValue = value;
+                    });
+                  }),
+              Container(
+                width: 30,
+                height: 30,
+                alignment: Alignment.center,
+                child: Container(
+                  height: paintSize(),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Color pickerColor = Colors.black;
   BlendMode blendMode = BlendMode.softLight;
-  double _sliderMin = 5.0;
-  double _sliderMax = 50.0;
-  double _sliderValue = 5.0;
+  double _sliderMin = 1.0;
+  double _sliderMax = 10.0;
+  double _sliderValue = 3;
   AnimationController _controller;
   Animation<double> animation;
-  List<Offset> localList = [];
+  List<Point> localList = [];
+  Paint paint;
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<Point>(context, listen: false);
     return Scaffold(
       appBar: AppBarWidget(
-        selectedColor: pickerColor,
-        onColorTapped: () {
-          showDialog(
-              context: context,
-              child: AlertDialog(
-                  title: const Text('Pick a color!'),
-                  content: SingleChildScrollView(
-                    child: ColorPicker(
-                      pickerColor: pickerColor,
-                      onColorChanged: changeColor,
-                      showLabel: true,
-                      pickerAreaHeightPercent: 0.8,
-                    ),
-                  )));
-        },
-        onEraserTapped: () {
-          setState(() {
-            localList = [];
-          });
-          offSetController.offset.sink.add(localList);
-        },
-        onPenTapped: () {
-          _controller.forward();
-        },
-      ),
+          selectedColor: pickerColor,
+          onColorTapped: () {
+            showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                    title: const Text('Pick a color!'),
+                    content: SingleChildScrollView(
+                      child: ColorPicker(
+                        pickerColor: pickerColor,
+                        onColorChanged: changeColor,
+                        showLabel: true,
+                        pickerAreaHeightPercent: 0.8,
+                      ),
+                    )));
+          },
+          onEraserTapped: () {
+            setState(() {
+              localList.clear();
+            });
+            points.controller.sink.add(localList);
+            store.points = localList;
+          },
+          onPenTapped: onPenTapped),
       body: GestureDetector(
         onTap: () {
           if (_controller.status == AnimationStatus.completed) {
-            _controller.reset();
+            _controller.reverse();
             return;
           }
         },
@@ -81,24 +149,35 @@ class _WhiteBoardState extends State<WhiteBoard>
                 final renderBox = context.findRenderObject() as RenderBox;
                 final localPosition =
                     renderBox.globalToLocal(startDetails.globalPosition);
-                localList.add(localPosition);
-                offSetController.offset.sink.add(localList);
+                localList.add(Point(
+                    paint: Paint()
+                      ..color = pickerColor
+                      ..strokeWidth = _sliderValue,
+                    position: localPosition));
+                points.controller.sink.add(localList);
+                store.points = localList;
               },
               onPanUpdate: (updateDetails) {
                 final renderBox = context.findRenderObject() as RenderBox;
                 final localPosition =
                     renderBox.globalToLocal(updateDetails.globalPosition);
-                localList.add(localPosition);
-                offSetController.offset.sink.add(localList);
+                localList.add(Point(
+                    paint: Paint()
+                      ..color = pickerColor
+                      ..strokeWidth = _sliderValue,
+                    position: localPosition));
+                points.controller.sink.add(localList);
+                store.points = localList;
               },
               onPanEnd: (downDetails) {
                 localList.add(null);
-                offSetController.offset.sink.add(localList);
+                points.controller.sink.add(localList);
+                store.points = localList;
               },
-              child: StreamBuilder<List<Offset>>(
-                  stream: offSetController.offset.stream,
+              child: StreamBuilder<List<Point>>(
+                  stream: points.controller.stream,
                   builder: (BuildContext context,
-                      AsyncSnapshot<List<Offset>> snapshot) {
+                      AsyncSnapshot<List<Point>> snapshot) {
                     return snapshot.data == null
                         ? Container(
                             color: Colors.transparent,
@@ -109,10 +188,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                             cursorStyle: Cursor.crosshair,
                             child: CustomPaint(
                               painter: WhiteBoardPainter(
-                                  offsetList: snapshot.data,
-                                  color: pickerColor,
-                                  strokeWidth: _sliderValue,
-                                  blendMode: blendMode),
+                                  points: snapshot.data, blendMode: blendMode),
                               child: Container(),
                             ),
                           );
@@ -121,53 +197,7 @@ class _WhiteBoardState extends State<WhiteBoard>
             CustomPaint(
               painter: DotPainter(),
             ),
-            Align(
-              alignment: Alignment.topRight,
-              child: Transform.translate(
-                offset: Offset(
-                  0,
-                  animation.value,
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.15),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text('Pointer Size:  '),
-                      Text(_sliderValue.toStringAsPrecision(2)),
-                      Slider(
-                          value: _sliderValue,
-                          min: _sliderMin,
-                          max: _sliderMax,
-                          label: 'Size',
-                          onChanged: (value) {
-                            setState(() {
-                              _sliderValue = value;
-                            });
-                          }),
-                      Container(
-                        width: 40,
-                        height: 40,
-                        alignment: Alignment.center,
-                        child: Container(
-                          height: _sliderValue,
-                          width: _sliderValue,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.circular(_sliderValue)),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            )
+            _topPaintBar()
           ],
         ),
       ),
@@ -177,59 +207,55 @@ class _WhiteBoardState extends State<WhiteBoard>
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 }
 
 class WhiteBoardPainter extends CustomPainter {
-  WhiteBoardPainter(
-      {this.offsetList, this.blendMode, this.color, this.strokeWidth});
+  WhiteBoardPainter({
+    this.points,
+    this.blendMode,
+  });
   Animation<Color> animation;
-  List<Offset> offsetList;
+  List<Point> points;
   BlendMode blendMode;
-  double strokeWidth;
-  Color color;
-  @override
+  final double _dotsDx = 40;
+  final double _dotsDy = 40;
+  Paint pen = Paint();
+
+  void drawBackgroundPoints(Canvas canvas, Size size) {
+    pen
+      ..style = PaintingStyle.stroke
+      ..color = Colors.grey.withOpacity(0.4)
+      ..strokeWidth = 1.0;
+    for (double dx = 0; dx <= size.width; dx = dx + _dotsDx) {
+      for (double dy = 0; dy <= size.height; dy = dy + _dotsDy) {
+        canvas.drawCircle(Offset(dx, dy), 2, pen);
+      }
+    }
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint
 
-    final double _dotsDx = 40;
-    final double _dotsDy = 40;
-    Paint paint = Paint();
-
-    /// paint for the background dots
-    paint
-      ..style = PaintingStyle.stroke
-      ..color = Colors.grey.withOpacity(0.4)
-      ..strokeWidth = 1.0;
-
     /// draw Background dots for accuracy
-    ///
-    for (double dx = 0; dx <= size.width; dx = dx + _dotsDx) {
-      for (double dy = 0; dy <= size.height; dy = dy + _dotsDy) {
-        canvas.drawCircle(Offset(dx, dy), 2, paint);
-      }
-    }
+    drawBackgroundPoints(canvas, size);
 
-    /// define paint for the brush
-    ///
-    paint
-      ..color = color //Color.fromRGBO(97, 190, 162, 1.0)
-      ..strokeWidth = strokeWidth
-      // ..strokeJoin = StrokeJoin.round
-      // ..blendMode = blendMode
-      // ..imageFilter = ImageFilter.blur()
-      ..style = PaintingStyle.fill;
+    pen.style = PaintingStyle.fill;
     // final c = size.center(Offset.zero);
 
-    for (var i = 0; i < offsetList.length - 1; i++) {
-      if (offsetList[i] != null && offsetList[i + 1] != null) {
+    for (var i = 0; i < points.length - 1; i++) {
+      if (points[i] != null &&
+          points[i]?.position != null &&
+          points[i + 1]?.position != null) {
         canvas.drawLine(
-            Offset(offsetList[i].dx, offsetList[i].dy - kToolbarHeight),
-            Offset(offsetList[i + 1].dx, offsetList[i + 1].dy - kToolbarHeight),
-            paint);
+            Offset(
+                points[i].position.dx, points[i].position.dy - kToolbarHeight),
+            Offset(points[i + 1].position.dx,
+                points[i + 1].position.dy - kToolbarHeight),
+            points[i].paint);
       }
     }
   }
@@ -240,12 +266,11 @@ class WhiteBoardPainter extends CustomPainter {
 
 }
 
-class OffSetController {
-  final offset = StreamController<List<Offset>>.broadcast();
-
+class PointController {
+  final controller = StreamController<List<Point>>.broadcast();
   void dispose() {
-    offset.close();
+    controller.close();
   }
 }
 
-OffSetController offSetController = OffSetController();
+PointController points = PointController();
