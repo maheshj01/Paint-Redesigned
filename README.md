@@ -1,8 +1,6 @@
-# canvas
+# canvas [Live Version Here](https://maheshmnj.github.io/paint/#/)
 
-A Work in Progress WhiteBoard built with flutter 
-
-## Update #1 
+A Work in Progress WhiteBoard built with flutter.You are welcome to contribute and suggest features/Point Issues. 
 
 ![ezgif com-video-to-gif (1)](https://user-images.githubusercontent.com/31410839/82818971-36958e80-9ebd-11ea-91e3-f1b556a7901c.gif)
 
