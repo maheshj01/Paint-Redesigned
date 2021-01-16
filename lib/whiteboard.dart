@@ -27,6 +27,9 @@ class _WhiteBoardState extends State<WhiteBoard>
           ..addListener(() => setState(() {}));
     animation = Tween(begin: -200.0, end: 0.0).animate(_controller);
     paint = Paint();
+    WidgetsBinding.instance.addPostFrameCallback((x) {
+      points.controller.sink.add([]);
+    });
   }
 
   void changeColor(Color color) {
@@ -179,23 +182,18 @@ class _WhiteBoardState extends State<WhiteBoard>
                 store.points = localList;
               },
               child: StreamBuilder<List<Point>>(
+                  initialData: [],
                   stream: points.controller.stream,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Point>> snapshot) {
-                    return snapshot.data == null
-                        ? Container(
-                            color: Colors.transparent,
-                            alignment: Alignment.center,
-                            child: Container(child: Text('Tap to Start')),
-                          )
-                        : Cursor(
-                            cursorStyle: Cursor.crosshair,
-                            child: CustomPaint(
-                              painter: WhiteBoardPainter(
-                                  points: snapshot.data, blendMode: blendMode),
-                              child: Container(),
-                            ),
-                          );
+                    return Cursor(
+                      cursorStyle: Cursor.crosshair,
+                      child: CustomPaint(
+                        painter: WhiteBoardPainter(
+                            points: snapshot.data, blendMode: blendMode),
+                        child: Container(),
+                      ),
+                    );
                   }),
             ),
             CustomPaint(
