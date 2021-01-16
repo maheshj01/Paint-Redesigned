@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Point extends ChangeNotifier {
   final Offset position;
   final Paint paint;
-  List<Point> _points;
+  List<Point> _points = [];
 
   set points(List<Point> p) {
     _points = p;

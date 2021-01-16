@@ -105,7 +105,6 @@ class _WhiteBoardState extends State<WhiteBoard>
   double _sliderValue = 3;
   AnimationController _controller;
   Animation<double> animation;
-  List<Point> localList = [];
   Paint paint;
   @override
   Widget build(BuildContext context) {
@@ -128,6 +127,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                     )));
           },
           onEraserTapped: () {
+            List<Point> localList = store.points;
             setState(() {
               localList.clear();
             });
@@ -146,9 +146,11 @@ class _WhiteBoardState extends State<WhiteBoard>
           children: <Widget>[
             GestureDetector(
               onPanStart: (startDetails) {
+                List<Point> localList = store.points;
                 final renderBox = context.findRenderObject() as RenderBox;
                 final localPosition =
                     renderBox.globalToLocal(startDetails.globalPosition);
+
                 localList.add(Point(
                     paint: Paint()
                       ..color = pickerColor
@@ -158,6 +160,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                 store.points = localList;
               },
               onPanUpdate: (updateDetails) {
+                List<Point> localList = store.points;
                 final renderBox = context.findRenderObject() as RenderBox;
                 final localPosition =
                     renderBox.globalToLocal(updateDetails.globalPosition);
@@ -170,6 +173,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                 store.points = localList;
               },
               onPanEnd: (downDetails) {
+                List<Point> localList = store.points;
                 localList.add(null);
                 points.controller.sink.add(localList);
                 store.points = localList;

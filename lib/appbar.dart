@@ -66,18 +66,19 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
                               }
                             }
                             points.controller.sink.add(newList);
+                            store.points = newList;
                           }),
-                      IconButton(
-                          icon: Icon(
-                            Icons.redo,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            final List<Point> totalPoints = store.points;
-                            for (int i = 0; i < 100; i++) {
-                              
-                            }
-                          }),
+                      // IconButton(
+                      //     icon: Icon(
+                      //       Icons.redo,
+                      //       color: Colors.white,
+                      //     ),
+                      //     onPressed: () {
+                      //       final List<Point> totalPoints = store.points;
+                      //       for (int i = 0; i < 100; i++) {
+
+                      //       }
+                      //     }),
                     ],
                   ),
                 ),
