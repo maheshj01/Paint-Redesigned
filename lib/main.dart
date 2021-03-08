@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => Point(),
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Flutter Canvas',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
