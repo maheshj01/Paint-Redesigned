@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:canvas/appbar.dart';
 import 'package:canvas/cursor.dart';
@@ -20,7 +19,6 @@ class _WhiteBoardState extends State<WhiteBoard>
     with SingleTickerProviderStateMixin {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _controller =
         AnimationController(duration: Duration(milliseconds: 500), vsync: this)
@@ -124,7 +122,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                       child: ColorPicker(
                         pickerColor: pickerColor,
                         onColorChanged: changeColor,
-                        showLabel: true,
+                        labelTypes: [ColorLabelType.hex],
                         pickerAreaHeightPercent: 0.8,
                       ),
                     )));
@@ -270,7 +268,7 @@ class WhiteBoardPainter extends CustomPainter {
 
 class PointController {
   final StreamController<List<Point?>> controller =
-      StreamController<List<Point>>.broadcast();
+      StreamController<List<Point?>>.broadcast();
   void dispose() {
     controller.close();
   }

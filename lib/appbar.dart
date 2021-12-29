@@ -38,6 +38,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
     );
 
     return StreamBuilder<List<Point?>>(
+      initialData: [],
         stream: points.controller.stream,
         builder: (BuildContext context, AsyncSnapshot<List<Point?>> snapshot) {
           return Container(
