@@ -27,7 +27,7 @@ class _WhiteBoardState extends State<WhiteBoard>
           ..addListener(() => setState(() {}));
     animation = Tween(begin: -200.0, end: 0.0).animate(_controller);
     paint = Paint();
-    WidgetsBinding.instance.addPostFrameCallback((x) {
+    WidgetsBinding.instance!.addPostFrameCallback((x) {
       points.controller.sink.add([]);
     });
   }
@@ -45,7 +45,7 @@ class _WhiteBoardState extends State<WhiteBoard>
     return;
   }
 
-  double paintSize() {
+  double? paintSize() {
     if (_sliderValue < 3)
       return _sliderValue * 3;
     else if (_sliderValue < 8) return _sliderValue * 2;
@@ -106,9 +106,9 @@ class _WhiteBoardState extends State<WhiteBoard>
   double _sliderMin = 1.0;
   double _sliderMax = 10.0;
   double _sliderValue = 3;
-  AnimationController _controller;
-  Animation<double> animation;
-  Paint paint;
+  late AnimationController _controller;
+  late Animation<double> animation;
+  Paint? paint;
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<Point>(context, listen: false);
@@ -130,7 +130,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                     )));
           },
           onEraserTapped: () {
-            List<Point> localList = store.points;
+            List<Point?> localList = store.points;
             setState(() {
               localList.clear();
             });
@@ -149,7 +149,7 @@ class _WhiteBoardState extends State<WhiteBoard>
           children: <Widget>[
             GestureDetector(
               onPanStart: (startDetails) {
-                List<Point> localList = store.points;
+                List<Point?> localList = store.points;
                 final renderBox = context.findRenderObject() as RenderBox;
                 final localPosition =
                     renderBox.globalToLocal(startDetails.globalPosition);
@@ -163,7 +163,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                 store.points = localList;
               },
               onPanUpdate: (updateDetails) {
-                List<Point> localList = store.points;
+                List<Point?> localList = store.points;
                 final renderBox = context.findRenderObject() as RenderBox;
                 final localPosition =
                     renderBox.globalToLocal(updateDetails.globalPosition);
@@ -176,16 +176,16 @@ class _WhiteBoardState extends State<WhiteBoard>
                 store.points = localList;
               },
               onPanEnd: (downDetails) {
-                List<Point> localList = store.points;
+                List<Point?> localList = store.points;
                 localList.add(null);
                 points.controller.sink.add(localList);
                 store.points = localList;
               },
-              child: StreamBuilder<List<Point>>(
+              child: StreamBuilder<List<Point?>>(
                   initialData: [],
                   stream: points.controller.stream,
                   builder: (BuildContext context,
-                      AsyncSnapshot<List<Point>> snapshot) {
+                      AsyncSnapshot<List<Point?>> snapshot) {
                     return Cursor(
                       cursorStyle: Cursor.crosshair,
                       child: CustomPaint(
@@ -219,9 +219,9 @@ class WhiteBoardPainter extends CustomPainter {
     this.points,
     this.blendMode,
   });
-  Animation<Color> animation;
-  List<Point> points;
-  BlendMode blendMode;
+  Animation<Color>? animation;
+  List<Point?>? points;
+  BlendMode? blendMode;
   final double _dotsDx = 40;
   final double _dotsDy = 40;
   Paint pen = Paint();
@@ -248,16 +248,16 @@ class WhiteBoardPainter extends CustomPainter {
     pen.style = PaintingStyle.fill;
     // final c = size.center(Offset.zero);
 
-    for (var i = 0; i < points.length - 1; i++) {
-      if (points[i] != null &&
-          points[i]?.position != null &&
-          points[i + 1]?.position != null) {
+    for (var i = 0; i < points!.length - 1; i++) {
+      if (points![i] != null &&
+          points![i]?.position != null &&
+          points![i + 1]?.position != null) {
         canvas.drawLine(
-            Offset(
-                points[i].position.dx, points[i].position.dy - kToolbarHeight),
-            Offset(points[i + 1].position.dx,
-                points[i + 1].position.dy - kToolbarHeight),
-            points[i].paint);
+            Offset(points![i]!.position!.dx,
+                points![i]!.position!.dy - kToolbarHeight),
+            Offset(points![i + 1]!.position!.dx,
+                points![i + 1]!.position!.dy - kToolbarHeight),
+            points![i]!.paint!);
       }
     }
   }
@@ -269,7 +269,8 @@ class WhiteBoardPainter extends CustomPainter {
 }
 
 class PointController {
-  final controller = StreamController<List<Point>>.broadcast();
+  final StreamController<List<Point?>> controller =
+      StreamController<List<Point>>.broadcast();
   void dispose() {
     controller.close();
   }

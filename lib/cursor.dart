@@ -31,16 +31,16 @@ class Cursor extends MouseRegion {
   static final String wResize = 'w-resize';
   static final String swResize = 'sw-resize';
 
-  Cursor({Widget child, String cursorStyle = 'pointer'})
+  Cursor({Widget? child, String cursorStyle = 'pointer'})
       : super(
             onHover: (PointerHoverEvent evt) {
               if (kIsWeb) {
-                appContainer.style.cursor = cursorStyle;
+                appContainer!.style.cursor = cursorStyle;
               }
             },
             onExit: (PointerExitEvent evt) {
               if (kIsWeb) {
-                appContainer.style.cursor = 'default';
+                appContainer!.style.cursor = 'default';
               }
             },
             child: child);

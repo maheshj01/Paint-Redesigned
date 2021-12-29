@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
-  final String title;
-  final Widget leading;
-  Color selectedColor;
-  Function onPenTapped;
-  Function onEraserTapped;
-  Function onColorTapped;
-  final BuildContext context;
-  final List<Widget> actions;
+  final String? title;
+  final Widget? leading;
+  Color? selectedColor;
+  Function? onPenTapped;
+  Function? onEraserTapped;
+  Function? onColorTapped;
+  final BuildContext? context;
+  final List<Widget>? actions;
   int totalPoints = 0; // multiples of 100
 
   Widget colorBoxWidget() {
@@ -20,7 +20,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   }
 
   AppBarWidget(
-      {Key key,
+      {Key? key,
       this.title,
       this.leading,
       this.context,
@@ -37,9 +37,9 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
       listen: false,
     );
 
-    return StreamBuilder<List<Point>>(
+    return StreamBuilder<List<Point?>>(
         stream: points.controller.stream,
-        builder: (BuildContext context, AsyncSnapshot<List<Point>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<List<Point?>> snapshot) {
           return Container(
             color: Colors.blueAccent,
             child: Row(
@@ -55,12 +55,12 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
                             color: Colors.white,
                           ),
                           onPressed: () {
-                            List<Point> newList = [];
+                            List<Point?> newList = [];
                             if (snapshot.data != null) {
-                              List<Point> pointsList = [];
+                              List<Point?>? pointsList = [];
                               pointsList = snapshot.data;
                               for (int i = 0;
-                                  i < pointsList.length - 100;
+                                  i < pointsList!.length - 100;
                                   i++) {
                                 newList.add(pointsList[i]);
                               }
@@ -87,7 +87,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
                   child: Wrap(
                     children: <Widget>[
                       GestureDetector(
-                        onTap: onColorTapped,
+                        onTap: onColorTapped as void Function()?,
                         child: Container(
                             width: 50,
                             height: 50,
@@ -99,13 +99,13 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
                             Icons.brush,
                             color: Colors.white,
                           ),
-                          onPressed: onPenTapped),
+                          onPressed: onPenTapped as void Function()?),
                       IconButton(
                           icon: Icon(
                             Icons.radio_button_checked,
                             color: Colors.white,
                           ),
-                          onPressed: onEraserTapped),
+                          onPressed: onEraserTapped as void Function()?),
                     ],
                   ),
                 ),
