@@ -1,5 +1,4 @@
-import 'package:canvas/point.dart';
-import 'package:canvas/whiteboard.dart';
+import 'package:paint_redesigned/point.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -76,24 +75,30 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
     return Scaffold(
       body: Column(
         children: [
+          SizedBox(
+            height: 100,
+          ),
           Flexible(
             child: InteractiveViewer(
               scaleEnabled: true,
               minScale: 0.01,
-              maxScale: 3.0,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(100),
+              maxScale: 5.0,
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
                 child: Container(
-                  decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: Offset(5, 5),
-                      spreadRadius: 4,
-                    )
-                  ]),
-                  child: Container(),
+                  color: Colors.transparent,
+                  padding: EdgeInsets.all(100),
+                  child: Container(
+                    decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: Offset(5, 5),
+                        spreadRadius: 4,
+                      )
+                    ]),
+                    child: Container(),
+                  ),
                 ),
               ),
             ),

@@ -1,4 +1,4 @@
-package com.example.flutter_paint
+package com.wmlpaint_redesigned
 
 import io.flutter.embedding.android.FlutterActivity
 

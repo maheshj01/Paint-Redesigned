@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:canvas/appbar.dart';
-import 'package:canvas/cursor.dart';
-import 'package:canvas/dotpainter.dart';
+import 'package:paint_redesigned/appbar.dart';
+import 'package:paint_redesigned/cursor.dart';
+import 'package:paint_redesigned/dotpainter.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
