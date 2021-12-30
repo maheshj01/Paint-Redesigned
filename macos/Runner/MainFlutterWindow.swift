@@ -13,12 +13,13 @@ class MainFlutterWindow: NSWindow {
   self.titleVisibility = NSWindow.TitleVisibility.visible;
   self.titlebarAppearsTransparent = true;
   self.isMovableByWindowBackground = true;
+  // self.MainFlutterWindow.styleMask = mainWindow.styleMask & ~NSWindowStyleMaskResizable
   self.standardWindowButton(NSWindow.ButtonType.miniaturizeButton)?.isEnabled = false;
 
   /* Making the window transparent */
   self.isOpaque = false
   self.backgroundColor = .clear
-
+  self.minSize = NSSize(width: 800, height: 600)
   /* Adding a NSVisualEffectView to act as a translucent background */
   let contentView = contentViewController!.view;
   let superView = contentView.superview!;

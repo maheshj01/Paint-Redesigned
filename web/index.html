@@ -33,6 +33,13 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+  <script>
+  var size = [window.width,window.height];
+  $(window).resize(function(){
+    window.resizeTo(size[0],size[1]);
+});
+  </script>
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->

@@ -1,8 +1,11 @@
+import 'package:paint_redesigned/create_mode.dart';
+import 'package:paint_redesigned/drawer.dart';
 import 'package:paint_redesigned/point.dart';
 import 'package:flutter/material.dart';
+import 'package:paint_redesigned/toolbar_view.dart';
 import 'package:provider/provider.dart';
-
 import 'constants/constants.dart';
+import 'models/toolbar.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,17 +14,21 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => Point(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Point>(create: (_) => Point()),
+        ChangeNotifierProvider<Toolbar>(create: (_) => Toolbar()),
+      ],
       child: MaterialApp(
-        title: 'Flutter Canvas',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: PaintHome(),
-      ),
+          title: 'Flutter Canvas',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+              primarySwatch: Colors.blue,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              hoverColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent),
+          home: PaintHome()),
     );
   }
 }
@@ -35,13 +42,12 @@ class PaintHome extends StatefulWidget {
 
 class _PaintHomeState extends State<PaintHome> {
   int _selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     List<Widget> _tabsViewBuilder = [CanvasBuilder(), CreateMode()];
 
-    return Scaffold(
-      body: Row(
+    return Material(
+      child: Row(
         children: <Widget>[
           NavigationRail(
             selectedIndex: _selectedIndex,
@@ -54,8 +60,8 @@ class _PaintHomeState extends State<PaintHome> {
             destinations: tabs,
           ),
           const VerticalDivider(thickness: 1, width: 1),
-          // This is the main content.
-          Expanded(child: _tabsViewBuilder.elementAt(_selectedIndex))
+          Expanded(child: _tabsViewBuilder.elementAt(_selectedIndex)),
+          EndDrawer()
         ],
       ),
     );
@@ -73,55 +79,48 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: 100,
-          ),
-          Flexible(
-            child: InteractiveViewer(
-              scaleEnabled: true,
-              minScale: 0.01,
-              maxScale: 5.0,
-              child: AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Container(
-                  color: Colors.transparent,
-                  padding: EdgeInsets.all(100),
-                  child: Container(
-                    decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
-                        blurRadius: 12,
-                        offset: Offset(5, 5),
-                        spreadRadius: 4,
-                      )
-                    ]),
-                    child: Container(),
-                  ),
-                ),
-              ),
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 50,
             ),
-          ),
-        ],
+            ToolBarView(),
+            SizedBox(
+              height: 20,
+            ),
+            Flexible(
+              child: InteractiveViewer(
+                  scaleEnabled: true,
+                  minScale: 0.01,
+                  maxScale: 5.0,
+                  child: Consumer<Toolbar>(
+                      builder: (context, Toolbar _tool, Widget? child) {
+                    return AspectRatio(
+                      aspectRatio: aspectRatios[_tool.aspectRatio]!,
+                      child: Container(
+                        color: Colors.transparent,
+                        padding: EdgeInsets.all(100),
+                        child: Container(
+                          decoration:
+                              BoxDecoration(color: Colors.white, boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 12,
+                              offset: Offset(5, 5),
+                              spreadRadius: 4,
+                            )
+                          ]),
+                          child: Container(),
+                        ),
+                      ),
+                    );
+                  })),
+            ),
+          ],
+        ),
       ),
-    );
-  }
-}
-
-//// Mode to create Banners
-class CreateMode extends StatefulWidget {
-  const CreateMode({Key? key}) : super(key: key);
-
-  @override
-  _CreateModeState createState() => _CreateModeState();
-}
-
-class _CreateModeState extends State<CreateMode> {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Create Mode..🔥'),
     );
   }
 }
