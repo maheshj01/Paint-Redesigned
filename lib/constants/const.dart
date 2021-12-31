@@ -21,7 +21,7 @@ const Map<String, Ratio> aspectRatios = {
   "16:9": 1.77,
   "3:4": 0.75,
   "1:1": 1.0,
-  "9:16": 0.56,
+  "5:4": 1.25,
 };
 
 const double aspectRatioCardSize = 100;

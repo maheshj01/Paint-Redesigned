@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+
 enum Tool { size, color, eraser, text, brush }
 
 class Toolbar extends ChangeNotifier {
-  Tool _activeTool = Tool.brush;
+  Tool _activeTool = Tool.size;
   String _aspectRatio = "1:1";
   Color _color = Colors.white;
 

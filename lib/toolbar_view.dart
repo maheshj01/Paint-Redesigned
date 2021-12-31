@@ -47,12 +47,39 @@ class _ToolBarViewState extends State<ToolBarView> {
             )
           ]),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _toolIcon(Tool.size, Icons.crop),
-          _toolIcon(Tool.color, Icons.color_lens),
-          _toolIcon(Tool.brush, Icons.brush),
-          _toolIcon(Tool.eraser, Icons.earbuds_battery),
+          Expanded(
+            flex: 5,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 50,
+                ),
+                IconButton(
+                  tooltip: 'Undo',
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.undo,
+                    color: Colors.blue,
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Redo',
+                  onPressed: () {},
+                  icon: Icon(Icons.redo, color: Colors.blue),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+              flex: 7,
+              child: Row(
+                children: [
+                  _toolIcon(Tool.size, Icons.crop),
+                  _toolIcon(Tool.color, Icons.color_lens),
+                  _toolIcon(Tool.brush, Icons.brush),
+                ],
+              ))
         ],
       ),
     );
