@@ -206,7 +206,6 @@ class _WhiteBoardState extends State<WhiteBoard>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _controller.dispose();
     super.dispose();
   }
@@ -238,8 +237,6 @@ class WhiteBoardPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // TODO: implement paint
-
     /// draw Background dots for accuracy
     drawBackgroundPoints(canvas, size);
 
@@ -262,8 +259,6 @@ class WhiteBoardPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
-  // TODO: implement shouldRepaint
-
 }
 
 class PointController {

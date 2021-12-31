@@ -23,3 +23,15 @@ const Map<String, Ratio> aspectRatios = {
   "1:1": 1.0,
   "9:16": 0.56,
 };
+
+const double aspectRatioCardSize = 100;
+
+const List<Color> canvasBackgroundColors = [
+  Colors.blueAccent,
+  Colors.greenAccent,
+  Colors.pinkAccent,
+  Colors.white,
+  Colors.orangeAccent,
+  Colors.deepPurpleAccent,
+  Colors.redAccent,
+];

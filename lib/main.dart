@@ -47,6 +47,7 @@ class _PaintHomeState extends State<PaintHome> {
     List<Widget> _tabsViewBuilder = [CanvasBuilder(), CreateMode()];
 
     return Material(
+      color: Colors.transparent,
       child: Row(
         children: <Widget>[
           NavigationRail(
@@ -104,7 +105,7 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                         padding: EdgeInsets.all(100),
                         child: Container(
                           decoration:
-                              BoxDecoration(color: Colors.white, boxShadow: [
+                              BoxDecoration(color: _tool.color, boxShadow: [
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.3),
                               blurRadius: 12,

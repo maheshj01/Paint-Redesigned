@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 /// Dots to show on the Cnavas to help
@@ -12,12 +11,8 @@ class DotPainter extends CustomPainter {
       ..strokeWidth = 100.0
       ..imageFilter = ImageFilter.blur()
       ..style = PaintingStyle.fill;
-    // TODO: implement paint
-    final c = Offset(0, 0);
     // for (int i = 0; i < size.width; i + 10) {
     // }
-    final pi = math.pi;
-    int i = 0;
     // while (i < size.width) {
     // canvas.drawPoints(PointMode.points, [Offset(c.dx + 20, 45)], paint);
     //   i += 20;
