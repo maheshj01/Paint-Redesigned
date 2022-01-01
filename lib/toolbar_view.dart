@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'models/explorer.dart';
 import 'models/models.dart';
 
 class ToolBarView extends StatefulWidget {
@@ -44,7 +42,7 @@ class _ToolBarViewState extends State<ToolBarView> {
             BoxShadow(
               color: Colors.grey.withOpacity(0.3),
               blurRadius: 12,
-              offset: Offset(5, 5),
+              offset: const Offset(5, 5),
               spreadRadius: 4,
             )
           ]),
@@ -54,13 +52,13 @@ class _ToolBarViewState extends State<ToolBarView> {
             flex: 5,
             child: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 50,
                 ),
                 IconButton(
                   tooltip: 'Undo',
                   onPressed: () {},
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.undo,
                     color: Colors.blue,
                   ),
@@ -68,7 +66,7 @@ class _ToolBarViewState extends State<ToolBarView> {
                 IconButton(
                   tooltip: 'Redo',
                   onPressed: () {},
-                  icon: Icon(Icons.redo, color: Colors.blue),
+                  icon: const Icon(Icons.redo, color: Colors.blue),
                 )
               ],
             ),

@@ -11,6 +11,8 @@ import 'package:provider/provider.dart';
 import 'point.dart';
 
 class WhiteBoard extends StatefulWidget {
+  const WhiteBoard({Key? key}) : super(key: key);
+
   @override
   _WhiteBoardState createState() => _WhiteBoardState();
 }
@@ -21,7 +23,7 @@ class _WhiteBoardState extends State<WhiteBoard>
   void initState() {
     super.initState();
     _controller =
-        AnimationController(duration: Duration(milliseconds: 500), vsync: this)
+        AnimationController(duration: const Duration(milliseconds: 500), vsync: this)
           ..addListener(() => setState(() {}));
     animation = Tween(begin: -200.0, end: 0.0).animate(_controller);
     paint = Paint();
@@ -44,9 +46,11 @@ class _WhiteBoardState extends State<WhiteBoard>
   }
 
   double? paintSize() {
-    if (_sliderValue < 3)
+    if (_sliderValue < 3) {
       return _sliderValue * 3;
-    else if (_sliderValue < 8) return _sliderValue * 2;
+    } else if (_sliderValue < 8) {
+      return _sliderValue * 2;
+    }
     if (_sliderValue <= 10) return _sliderValue * 1.5;
   }
 
@@ -59,7 +63,7 @@ class _WhiteBoardState extends State<WhiteBoard>
           animation.value,
         ),
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           height: 100,
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.15),
@@ -67,7 +71,7 @@ class _WhiteBoardState extends State<WhiteBoard>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text('Pointer Size:  '),
+              const Text('Pointer Size:  '),
               Text(_sliderValue.toInt().toString()),
               Slider(
                   value: _sliderValue,
@@ -86,7 +90,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                 child: Container(
                   height: paintSize(),
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
                   ),
@@ -101,8 +105,8 @@ class _WhiteBoardState extends State<WhiteBoard>
 
   Color pickerColor = Colors.black;
   BlendMode blendMode = BlendMode.softLight;
-  double _sliderMin = 1.0;
-  double _sliderMax = 10.0;
+  final double _sliderMin = 1.0;
+  final double _sliderMax = 10.0;
   double _sliderValue = 3;
   late AnimationController _controller;
   late Animation<double> animation;
@@ -122,7 +126,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                       child: ColorPicker(
                         pickerColor: pickerColor,
                         onColorChanged: changeColor,
-                        labelTypes: [ColorLabelType.hex],
+                        labelTypes: const [ColorLabelType.hex],
                         pickerAreaHeightPercent: 0.8,
                       ),
                     )));
@@ -180,7 +184,7 @@ class _WhiteBoardState extends State<WhiteBoard>
                 store.points = localList;
               },
               child: StreamBuilder<List<Point?>>(
-                  initialData: [],
+                  initialData: const [],
                   stream: points.controller.stream,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Point?>> snapshot) {

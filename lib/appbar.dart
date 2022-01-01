@@ -38,7 +38,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
     );
 
     return StreamBuilder<List<Point?>>(
-      initialData: [],
+      initialData: const [],
         stream: points.controller.stream,
         builder: (BuildContext context, AsyncSnapshot<List<Point?>> snapshot) {
           return Container(
@@ -51,7 +51,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
                   child: Wrap(
                     children: [
                       IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.undo,
                             color: Colors.white,
                           ),
@@ -96,13 +96,13 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
                             child: colorBoxWidget()),
                       ),
                       IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.brush,
                             color: Colors.white,
                           ),
                           onPressed: onPenTapped as void Function()?),
                       IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.radio_button_checked,
                             color: Colors.white,
                           ),
@@ -117,5 +117,5 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

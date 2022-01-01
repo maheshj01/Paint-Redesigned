@@ -12,7 +12,7 @@ class CreateMode extends StatefulWidget {
 class _CreateModeState extends State<CreateMode> {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text('Create Mode..🔥'),
     );
   }

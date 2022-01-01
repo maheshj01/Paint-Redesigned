@@ -1,18 +1,18 @@
-import 'package:paint_redesigned/create_mode.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:paint_redesigned/point.dart';
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/toolbar_view.dart';
 import 'package:provider/provider.dart';
 import 'constants/constants.dart';
-import 'models/explorer.dart';
 import 'models/models.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
               hoverColor: Colors.transparent,
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent),
-          home: PaintHome()),
+          home: const PaintHome()),
     );
   }
 }
@@ -45,12 +45,12 @@ class PaintHome extends StatefulWidget {
 class _PaintHomeState extends State<PaintHome> {
   @override
   Widget build(BuildContext context) {
-    List<Widget> _tabsViewBuilder = [CanvasBuilder(), CreateMode()];
+    // List<Widget> _tabsViewBuilder = const [CanvasBuilder(), CreateMode()];
 
     return Material(
       color: Colors.transparent,
       child: Row(
-        children: <Widget>[
+        children: const <Widget>[
           // NavigationRail(
           //   selectedIndex: _selectedIndex,
           //   onDestinationSelected: (int index) {
@@ -88,11 +88,11 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
-            ToolBarView(),
-            SizedBox(
+            const ToolBarView(),
+            const SizedBox(
               height: 20,
             ),
             Flexible(
@@ -106,14 +106,14 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                       aspectRatio: aspectRatios[_tool.aspectRatio]!,
                       child: Container(
                         color: backgroundColor,
-                        padding: EdgeInsets.all(100),
+                        padding: const EdgeInsets.all(100),
                         child: Container(
                           decoration:
                               BoxDecoration(color: _tool.color, boxShadow: [
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.3),
                               blurRadius: 12,
-                              offset: Offset(5, 5),
+                              offset: const Offset(5, 5),
                               spreadRadius: 4,
                             )
                           ]),

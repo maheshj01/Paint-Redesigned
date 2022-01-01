@@ -80,7 +80,7 @@ class _ToolExplorerState extends State<ToolExplorer>
                           _explorer.aspectRatio = size;
                         },
                       ),
-                      ColorDrawer()
+                      const ColorDrawer()
                     ],
                   ),
                 );
@@ -90,8 +90,8 @@ class _ToolExplorerState extends State<ToolExplorer>
 }
 
 class SizeDrawer extends StatefulWidget {
+  const SizeDrawer({Key? key, this.onSizeTap}) : super(key: key);
   final Function(String)? onSizeTap;
-  SizeDrawer({Key? key, this.onSizeTap}) : super(key: key);
 
   @override
   _SizeDrawerState createState() => _SizeDrawerState();
@@ -102,7 +102,6 @@ class _SizeDrawerState extends State<SizeDrawer> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _colorController = TextEditingController();
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
@@ -112,7 +111,6 @@ class _SizeDrawerState extends State<SizeDrawer> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _colorController.dispose();
     super.dispose();
   }
@@ -131,7 +129,7 @@ class _SizeDrawerState extends State<SizeDrawer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          DrawerSubTitle("Canvas Aspect Ratio"),
+          const DrawerSubTitle("Canvas Aspect Ratio"),
           Wrap(
             children: [
               for (var i = 0; i < _length; i++)
@@ -158,7 +156,7 @@ class _SizeDrawerState extends State<SizeDrawer> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DrawerSubTitle("Active Color"),
+                const DrawerSubTitle("Active Color"),
                 ColorField(
                   controller: _colorController,
                   onTap: () {},
@@ -174,7 +172,7 @@ class _SizeDrawerState extends State<SizeDrawer> {
               ],
             ),
           ),
-          DrawerSubTitle('Recents'),
+         const DrawerSubTitle('Recents'),
           Consumer<Explorer>(builder: (context, Explorer _tool, Widget? child) {
             final length = _tool.recents.length > noOfRecentColors
                 ? noOfRecentColors
@@ -183,7 +181,7 @@ class _SizeDrawerState extends State<SizeDrawer> {
               height: length == 0 ? 0 : 50,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.only(left: 16),
+                padding: const EdgeInsets.only(left: 16),
                 itemCount: length,
                 itemBuilder: (context, index) {
                   final recents = _tool.recents;
@@ -196,7 +194,7 @@ class _SizeDrawerState extends State<SizeDrawer> {
                     child: Container(
                       height: 30,
                       width: 30,
-                      margin: EdgeInsets.symmetric(horizontal: 4),
+                      margin:const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
                         color: recents[index],
                         shape: BoxShape.circle,
@@ -235,9 +233,9 @@ class DrawerSubTitle extends StatelessWidget {
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
+        padding:const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
         child: Text(
-          "$text",
+          text,
           style: Theme.of(context)
               .textTheme
               .subtitle2!
@@ -249,11 +247,11 @@ class DrawerSubTitle extends StatelessWidget {
 }
 
 class ColorField extends StatefulWidget {
+  ColorField({Key? key, required this.controller, this.onTap, this.onChange})
+      : super(key: key);
   TextEditingController controller;
   final Function? onTap;
   final Function(String)? onChange;
-  ColorField({Key? key, required this.controller, this.onTap, this.onChange})
-      : super(key: key);
 
   @override
   _ColorFieldState createState() => _ColorFieldState();
@@ -274,9 +272,9 @@ class _ColorFieldState extends State<ColorField> {
           onTap: () => widget.onTap!(),
           textAlignVertical: TextAlignVertical.center,
           controller: widget.controller,
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
           maxLength: 9,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             counterText: '',
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
@@ -289,7 +287,7 @@ class _ColorFieldState extends State<ColorField> {
 }
 
 class ColorCard extends StatelessWidget {
-  ColorCard(
+ const ColorCard(
       {Key? key,
       required this.color,
       required this.isSelected,
@@ -299,16 +297,18 @@ class ColorCard extends StatelessWidget {
   final Function(Color)? onTap;
   final Color color;
   final bool isSelected;
-  Widget? child;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     // TODO: add tick animation
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Consumer<Explorer>(
         builder: (context, Explorer tool, Widget? child) {
+          final bool isChecked = tool.color == color;
+          // if (isChecked && child == null) {}
           return InkWell(
             onTap: () => onTap!(color),
             child: Container(
@@ -320,7 +320,7 @@ class ColorCard extends StatelessWidget {
               ),
               child: child != null
                   ? child
-                  : tool.color == color
+                  : isChecked
                       ? Icon(
                           Icons.check,
                           color: color == Colors.white
@@ -338,7 +338,7 @@ class ColorCard extends StatelessWidget {
 
 /// Card Layout for Aspect Ratio of Canvas
 class AspecRatioCard extends StatelessWidget {
-  AspecRatioCard(
+ const AspecRatioCard(
       {Key? key,
       required this.aspectRatioKey,
       required this.aspectRatioValue,
@@ -353,11 +353,11 @@ class AspecRatioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
         height: aspectRatioCardSize,
         width: aspectRatioCardSize,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8),
+          padding:const EdgeInsets.symmetric(horizontal: 8),
           alignment: Alignment.center,
           child: InkWell(
             onTap: () => onTap!(aspectRatioKey),
@@ -368,7 +368,7 @@ class AspecRatioCard extends StatelessWidget {
                     color: isSelected ? Colors.teal : Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        offset: Offset(2, 2),
+                        offset:const Offset(2, 2),
                         color: isSelected
                             ? Colors.teal.withOpacity(0.5)
                             : Colors.black.withOpacity(0.1),

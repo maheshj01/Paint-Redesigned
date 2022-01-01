@@ -45,9 +45,6 @@ class CanvasColor extends ColorExplorer {
   }
 
   @override
-  // TODO: implement activeColor
-  Color get activeColor => super.activeColor;
-
   set activeColor(Color value) {
     super.activeColor = value;
   }

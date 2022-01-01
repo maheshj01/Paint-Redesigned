@@ -34,6 +34,7 @@ dependencies:
   universal_html: ^2.0.8
   provider: ^6.0.1
   freezed_annotation: ^1.1.0
+  flutter_lints: ^1.0.4
 
 dev_dependencies:
   build_runner: ^2.1.7  

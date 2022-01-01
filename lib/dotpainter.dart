@@ -19,7 +19,7 @@ class DotPainter extends CustomPainter {
     // }
     // var rect = Offset(0.0, 0.0) & size;
     // var rect = Offset.zero & size;
-    canvas.drawArc(new Rect.fromLTWH(0.0, 0.0, size.width / 2, size.height / 2),
+    canvas.drawArc(Rect.fromLTWH(0.0, 0.0, size.width / 2, size.height / 2),
         0.175, 0.349, false, paint);
   }
 

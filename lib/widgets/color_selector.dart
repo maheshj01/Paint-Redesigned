@@ -5,6 +5,19 @@ import 'package:paint_redesigned/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class ColorSelector extends StatefulWidget {
+  
+  ColorSelector(
+      {Key? key,
+      required this.selectedColor,
+      required this.colors,
+      this.isExpanded = false,
+      this.title = 'Colors',
+      this.collapsedColorsLength = visibleColors,
+      this.onColorSelected})
+      : assert(colors.contains(selectedColor),
+            'Selected color must be in the list of colors'),
+        super(key: key);
+
   /// currently selected color
   final Color selectedColor;
 
@@ -18,17 +31,6 @@ class ColorSelector extends StatefulWidget {
 
   final Function(Color)? onColorSelected;
 
-  ColorSelector(
-      {Key? key,
-      required this.selectedColor,
-      required this.colors,
-      this.isExpanded = false,
-      this.title = 'Colors',
-      this.collapsedColorsLength = visibleColors,
-      this.onColorSelected})
-      : assert(colors.contains(selectedColor),
-            'Selected color must be in the list of colors'),
-        super(key: key);
   @override
   _ColorSelectorState createState() => _ColorSelectorState();
 }
@@ -36,7 +38,6 @@ class ColorSelector extends StatefulWidget {
 class _ColorSelectorState extends State<ColorSelector> {
   @override
   void didUpdateWidget(covariant ColorSelector oldWidget) {
-    // TODO: implement didUpdateWidget
     if (oldWidget.selectedColor != widget.selectedColor ||
         oldWidget.colors != widget.colors ||
         oldWidget.isExpanded != widget.isExpanded) {
@@ -48,14 +49,12 @@ class _ColorSelectorState extends State<ColorSelector> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isExpandedNotifier = ValueNotifier<bool>(widget.isExpanded);
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     isExpandedNotifier.dispose();
   }
@@ -94,7 +93,7 @@ class _ColorSelectorState extends State<ColorSelector> {
                           child: Container(
                               height: 48,
                               width: 48,
-                              margin: EdgeInsets.only(left: 8),
+                              margin: const EdgeInsets.only(left: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8.0),

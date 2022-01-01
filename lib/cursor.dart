@@ -7,32 +7,32 @@ class Cursor extends MouseRegion {
   static final appContainer =
       html.window.document.getElementById('app-container');
   // cursor types from http://www.javascripter.net/faq/stylesc.htm
-  static final String pointer = 'pointer';
-  static final String auto = 'auto';
-  static final String move = 'move';
-  static final String noDrop = 'no-drop';
-  static final String colResize = 'col-resize';
-  static final String allScroll = 'all-scroll';
-  static final String notAllowed = 'not-allowed';
-  static final String rowResize = 'row-resize';
-  static final String crosshair = 'crosshair';
-  static final String progress = 'progress';
-  static final String eResize = 'e-resize';
-  static final String neResize = 'ne-resize';
-  static final String text = 'text';
-  static final String nResize = 'n-resize';
-  static final String nwResize = 'nw-resize';
-  static final String help = 'help';
-  static final String verticalText = 'vertical-text';
-  static final String sResize = 's-resize';
-  static final String seResize = 'se-resize';
-  static final String inherit = 'inherit';
-  static final String wait = 'wait';
-  static final String wResize = 'w-resize';
-  static final String swResize = 'sw-resize';
+  static const String pointer = 'pointer';
+  static const String auto = 'auto';
+  static const String move = 'move';
+  static const String noDrop = 'no-drop';
+  static const String colResize = 'col-resize';
+  static const String allScroll = 'all-scroll';
+  static const String notAllowed = 'not-allowed';
+  static const String rowResize = 'row-resize';
+  static const String crosshair = 'crosshair';
+  static const String progress = 'progress';
+  static const String eResize = 'e-resize';
+  static const String neResize = 'ne-resize';
+  static const String text = 'text';
+  static const String nResize = 'n-resize';
+  static const String nwResize = 'nw-resize';
+  static const String help = 'help';
+  static const String verticalText = 'vertical-text';
+  static const String sResize = 's-resize';
+  static const String seResize = 'se-resize';
+  static const String inherit = 'inherit';
+  static const String wait = 'wait';
+  static const String wResize = 'w-resize';
+  static const String swResize = 'sw-resize';
 
-  Cursor({Widget? child, String cursorStyle = 'pointer'})
-      : super(
+  Cursor({Key? key, Widget? child, String cursorStyle = 'pointer'})
+      : super(key: key, 
             onHover: (PointerHoverEvent evt) {
               if (kIsWeb) {
                 appContainer!.style.cursor = cursorStyle;
