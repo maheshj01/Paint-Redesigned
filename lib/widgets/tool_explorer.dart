@@ -1,25 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/constants/const.dart';
+import 'package:paint_redesigned/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:paint_redesigned/utils/utils.dart';
-import 'models/explorer.dart';
-import 'models/models.dart';
+import '../models/models.dart';
 
-class EndDrawer extends StatefulWidget {
-  const EndDrawer({Key? key}) : super(key: key);
+class ToolExplorer extends StatefulWidget {
+  const ToolExplorer({Key? key}) : super(key: key);
 
   @override
-  State<EndDrawer> createState() => _EndDrawerState();
+  State<ToolExplorer> createState() => _ToolExplorerState();
 }
 
-class _EndDrawerState extends State<EndDrawer>
+class _ToolExplorerState extends State<ToolExplorer>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Tween _tween;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _controller = AnimationController(
       vsync: this,
@@ -118,6 +117,8 @@ class _SizeDrawerState extends State<SizeDrawer> {
     super.dispose();
   }
 
+  final isExpandedNotifier = ValueNotifier(false);
+
   late Explorer _toolbarProvider;
   @override
   Widget build(BuildContext context) {
@@ -208,27 +209,17 @@ class _SizeDrawerState extends State<SizeDrawer> {
               // width: 200,
             );
           }),
-          DrawerSubTitle('Colors'),
-          Wrap(
-            spacing: 2,
-            runSpacing: 8,
-            children: [
-              for (var i = 0; i < canvasBackgroundColors.length; i++)
-                Consumer<Explorer>(
-                    builder: (context, Explorer _tool, Widget? child) {
-                  bool isSelectedColor =
-                      _tool.color == canvasBackgroundColors[i];
-                  return ColorCard(
-                    onTap: (color) {
-                      _tool.color = color;
-                      _colorController.text = color.toHex();
-                    },
-                    color: canvasBackgroundColors[i],
-                    isSelected: isSelectedColor,
-                  );
-                })
-            ],
-          ),
+          Consumer<Explorer>(builder: (context, Explorer _tool, Widget? child) {
+            return ColorSelector(
+              selectedColor: _tool.color,
+              title: 'Background',
+              colors: canvasBackgroundColors,
+              isExpanded: false,
+              onColorSelected: (_color) {
+                _colorController.text = _color.toHex();
+              },
+            );
+          }),
         ],
       ),
     );
@@ -298,12 +289,17 @@ class _ColorFieldState extends State<ColorField> {
 }
 
 class ColorCard extends StatelessWidget {
-  const ColorCard(
-      {Key? key, required this.color, required this.isSelected, this.onTap})
+  ColorCard(
+      {Key? key,
+      required this.color,
+      required this.isSelected,
+      this.child,
+      this.onTap})
       : super(key: key);
   final Function(Color)? onTap;
   final Color color;
   final bool isSelected;
+  Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -322,13 +318,16 @@ class ColorCard extends StatelessWidget {
                 color: color,
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: tool.color == color
-                  ? Icon(
-                      Icons.check,
-                      color:
-                          color == Colors.white ? Colors.black : Colors.white,
-                    )
-                  : null,
+              child: child != null
+                  ? child
+                  : tool.color == color
+                      ? Icon(
+                          Icons.check,
+                          color: color == Colors.white
+                              ? Colors.black
+                              : Colors.white,
+                        )
+                      : null,
             ),
           );
         },
@@ -400,7 +399,15 @@ class _ColorDrawerState extends State<ColorDrawer> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        DrawerSubTitle("Colors"),
+        ColorSelector(
+          selectedColor: Colors.blueAccent,
+          title: 'Colors',
+          colors: Colors.accents,
+          isExpanded: false,
+          onColorSelected: (_color) {
+            // _colorController.text = _color.toHex();
+          },
+        )
       ],
     );
   }

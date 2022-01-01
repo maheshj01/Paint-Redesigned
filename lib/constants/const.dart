@@ -26,15 +26,16 @@ const Map<String, Ratio> aspectRatios = {
 
 const double aspectRatioCardSize = 100;
 
-const List<Color> canvasBackgroundColors = [
-  Colors.blueAccent,
-  Colors.greenAccent,
-  Colors.pinkAccent,
+List<Color> canvasBackgroundColors = [
+  Colors.blue,
+  Colors.green,
+  Colors.pink,
   Colors.white,
-  Colors.orangeAccent,
-  Colors.deepPurpleAccent,
-  Colors.redAccent,
-  Colors.brown
+  Colors.orange,
+  Colors.deepPurple,
+  Colors.brown,
+  ...Colors.accents
 ];
 
 const int noOfRecentColors = 5;
+const int visibleColors = 7;

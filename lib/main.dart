@@ -1,5 +1,5 @@
 import 'package:paint_redesigned/create_mode.dart';
-import 'package:paint_redesigned/drawer.dart';
+import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:paint_redesigned/point.dart';
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/toolbar_view.dart';
@@ -43,7 +43,6 @@ class PaintHome extends StatefulWidget {
 }
 
 class _PaintHomeState extends State<PaintHome> {
-  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     List<Widget> _tabsViewBuilder = [CanvasBuilder(), CreateMode()];
@@ -52,19 +51,20 @@ class _PaintHomeState extends State<PaintHome> {
       color: Colors.transparent,
       child: Row(
         children: <Widget>[
-          NavigationRail(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (int index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            labelType: NavigationRailLabelType.selected,
-            destinations: tabs,
-          ),
-          const VerticalDivider(thickness: 1, width: 1),
-          Expanded(child: _tabsViewBuilder.elementAt(_selectedIndex)),
-          EndDrawer()
+          // NavigationRail(
+          //   selectedIndex: _selectedIndex,
+          //   onDestinationSelected: (int index) {
+          //     setState(() {
+          //       _selectedIndex = index;
+          //     });
+          //   },
+          //   labelType: NavigationRailLabelType.selected,
+          //   destinations: tabs,
+          // ),
+          // const VerticalDivider(thickness: 1, width: 1),
+          // Expanded(child: _tabsViewBuilder.elementAt(_selectedIndex)),
+          Expanded(child: CanvasBuilder()),
+          ToolExplorer()
         ],
       ),
     );
@@ -81,8 +81,10 @@ class CanvasBuilder extends StatefulWidget {
 class _CanvasBuilderState extends State<CanvasBuilder> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+    final Color backgroundColor = Colors.grey[300]!;
+    return Material(
+      color: backgroundColor,
+      child: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -103,7 +105,7 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                     return AspectRatio(
                       aspectRatio: aspectRatios[_tool.aspectRatio]!,
                       child: Container(
-                        color: Colors.transparent,
+                        color: backgroundColor,
                         padding: EdgeInsets.all(100),
                         child: Container(
                           decoration:
