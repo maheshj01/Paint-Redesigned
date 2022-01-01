@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'models/toolbar.dart';
+import 'models/explorer.dart';
+import 'models/models.dart';
 
 class ToolBarView extends StatefulWidget {
   const ToolBarView({Key? key}) : super(key: key);
@@ -12,7 +13,8 @@ class ToolBarView extends StatefulWidget {
 
 class _ToolBarViewState extends State<ToolBarView> {
   Widget _toolIcon(Tool tool, IconData icon) {
-    return Consumer<Toolbar>(builder: (context, Toolbar _tool, Widget? child) {
+    return Consumer<Toolbar>(
+        builder: (context, Toolbar _tool, Widget? child) {
       bool isSelected = _tool.activeTool == tool;
       return IconButton(
           tooltip: tool.name,
@@ -76,7 +78,6 @@ class _ToolBarViewState extends State<ToolBarView> {
               child: Row(
                 children: [
                   _toolIcon(Tool.size, Icons.crop),
-                  _toolIcon(Tool.color, Icons.color_lens),
                   _toolIcon(Tool.brush, Icons.brush),
                 ],
               ))

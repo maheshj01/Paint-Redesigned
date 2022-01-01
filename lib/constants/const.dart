@@ -34,4 +34,7 @@ const List<Color> canvasBackgroundColors = [
   Colors.orangeAccent,
   Colors.deepPurpleAccent,
   Colors.redAccent,
+  Colors.brown
 ];
+
+const int noOfRecentColors = 5;

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:paint_redesigned/constants/const.dart';
 import 'package:provider/provider.dart';
 import 'package:paint_redesigned/utils/utils.dart';
-import 'models/toolbar.dart';
+import 'models/explorer.dart';
+import 'models/models.dart';
 
 class EndDrawer extends StatefulWidget {
   const EndDrawer({Key? key}) : super(key: key);
@@ -15,21 +16,25 @@ class EndDrawer extends StatefulWidget {
 class _EndDrawerState extends State<EndDrawer>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late Tween _tween;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(milliseconds: 500),
     );
 
-    _animation = Tween(begin: -1.0, end: 1.0).animate(
+    _tween = Tween<double>(begin: 100.0, end: 0.0);
+
+    _animation = _tween.animate(
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeInOut,
       ),
     );
+
     _controller.forward();
     if (!kIsWeb) {
       drawerBackgroundColor = Colors.transparent;
@@ -40,24 +45,40 @@ class _EndDrawerState extends State<EndDrawer>
 
   late Animation _animation;
   late Color drawerBackgroundColor;
+
+  int index(Tool _tool) {
+    switch (_tool) {
+      case Tool.size:
+        return 0;
+      case Tool.brush:
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final _explorer = Provider.of<Explorer>(context, listen: false);
     return Container(
         width: 300,
         color: drawerBackgroundColor,
         child:
             Consumer<Toolbar>(builder: (context, Toolbar tool, Widget? child) {
+          _controller.reset();
+          _controller.forward();
           return AnimatedBuilder(
               animation: _animation,
               builder: (BuildContext context, Widget? child) {
                 return Transform.translate(
-                  offset: Offset(_animation.value, 0),
+                  offset: Offset(_animation.value, 0.0),
+                  // offset: Offset(_animation.value, 0)
                   child: IndexedStack(
-                    index: tool.activeTool == Tool.size ? 0 : 1,
+                    index: index(tool.activeTool),
                     children: [
                       SizeDrawer(
                         onSizeTap: (size) {
-                          tool.aspectRatio = size;
+                          _explorer.aspectRatio = size;
                         },
                       ),
                       ColorDrawer()
@@ -97,25 +118,24 @@ class _SizeDrawerState extends State<SizeDrawer> {
     super.dispose();
   }
 
-  late Toolbar _toolbarProvider;
+  late Explorer _toolbarProvider;
   @override
   Widget build(BuildContext context) {
     final _length = aspectRatios.length;
     final _values = aspectRatios.values;
     final _keys = aspectRatios.keys;
 
-    _toolbarProvider = Provider.of<Toolbar>(context, listen: false);
+    _toolbarProvider = Provider.of<Explorer>(context, listen: false);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Divider(),
           DrawerSubTitle("Canvas Aspect Ratio"),
           Wrap(
             children: [
               for (var i = 0; i < _length; i++)
-                Consumer<Toolbar>(
-                    builder: (context, Toolbar _tool, Widget? child) {
+                Consumer<Explorer>(
+                    builder: (context, Explorer _tool, Widget? child) {
                   bool isSelectedAspectRatio =
                       _tool.aspectRatio == _keys.elementAt(i);
                   return AspecRatioCard(
@@ -130,11 +150,14 @@ class _SizeDrawerState extends State<SizeDrawer> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 16.0, top: 16.0, bottom: 16),
+            padding: const EdgeInsets.only(
+              right: 16.0,
+              top: 16.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DrawerSubTitle("Background Color"),
+                DrawerSubTitle("Active Color"),
                 ColorField(
                   controller: _colorController,
                   onTap: () {},
@@ -150,13 +173,49 @@ class _SizeDrawerState extends State<SizeDrawer> {
               ],
             ),
           ),
+          DrawerSubTitle('Recents'),
+          Consumer<Explorer>(builder: (context, Explorer _tool, Widget? child) {
+            final length = _tool.recents.length > noOfRecentColors
+                ? noOfRecentColors
+                : _tool.recents.length;
+            return SizedBox(
+              height: length == 0 ? 0 : 50,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(left: 16),
+                itemCount: length,
+                itemBuilder: (context, index) {
+                  final recents = _tool.recents;
+                  return InkWell(
+                    onTap: () {
+                      final _recentColor = recents[index];
+                      _tool.color = _recentColor;
+                      _colorController.text = _recentColor.toHex();
+                    },
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      margin: EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: recents[index],
+                        shape: BoxShape.circle,
+                        // borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              // width: 200,
+            );
+          }),
+          DrawerSubTitle('Colors'),
           Wrap(
             spacing: 2,
             runSpacing: 8,
             children: [
               for (var i = 0; i < canvasBackgroundColors.length; i++)
-                Consumer<Toolbar>(
-                    builder: (context, Toolbar _tool, Widget? child) {
+                Consumer<Explorer>(
+                    builder: (context, Explorer _tool, Widget? child) {
                   bool isSelectedColor =
                       _tool.color == canvasBackgroundColors[i];
                   return ColorCard(
@@ -190,8 +249,8 @@ class DrawerSubTitle extends StatelessWidget {
           "$text",
           style: Theme.of(context)
               .textTheme
-              .subtitle1!
-              .copyWith(color: Colors.white),
+              .subtitle2!
+              .copyWith(color: Colors.black),
         ),
       ),
     );
@@ -252,8 +311,8 @@ class ColorCard extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8.0),
-      child: Consumer<Toolbar>(
-        builder: (context, Toolbar tool, Widget? child) {
+      child: Consumer<Explorer>(
+        builder: (context, Explorer tool, Widget? child) {
           return InkWell(
             onTap: () => onTap!(color),
             child: Container(

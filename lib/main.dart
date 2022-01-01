@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:paint_redesigned/toolbar_view.dart';
 import 'package:provider/provider.dart';
 import 'constants/constants.dart';
-import 'models/toolbar.dart';
+import 'models/explorer.dart';
+import 'models/models.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<Point>(create: (_) => Point()),
+        ChangeNotifierProvider<Explorer>(create: (_) => Explorer()),
         ChangeNotifierProvider<Toolbar>(create: (_) => Toolbar()),
       ],
       child: MaterialApp(
@@ -96,8 +98,8 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                   scaleEnabled: true,
                   minScale: 0.01,
                   maxScale: 5.0,
-                  child: Consumer<Toolbar>(
-                      builder: (context, Toolbar _tool, Widget? child) {
+                  child: Consumer<Explorer>(
+                      builder: (context, Explorer _tool, Widget? child) {
                     return AspectRatio(
                       aspectRatio: aspectRatios[_tool.aspectRatio]!,
                       child: Container(
