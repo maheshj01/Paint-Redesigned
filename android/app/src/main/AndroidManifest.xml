@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wmlpaint_redesigned">
+    package="com.wml.paint_redesigned">
    <application
         android:label="Paint Redesigned"
         android:name="${applicationName}"
