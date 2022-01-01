@@ -5,7 +5,6 @@ import 'package:paint_redesigned/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class ColorSelector extends StatefulWidget {
-  
   ColorSelector(
       {Key? key,
       required this.selectedColor,
@@ -82,44 +81,37 @@ class _ColorSelectorState extends State<ColorSelector> {
                 runSpacing: 8,
                 children: [
                   for (var i = 0; i < colorsLength! + 1; i++)
-                    Consumer<Explorer>(
-                        builder: (context, Explorer _tool, Widget? child) {
-                      if (i == colorsLength) {
-                        return InkWell(
-                          enableFeedback: true,
-                          onTap: () {
-                            isExpandedNotifier.value = !isExpanded;
-                          },
-                          child: Container(
-                              height: 48,
-                              width: 48,
-                              margin: const EdgeInsets.only(left: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Icon(
-                                isExpanded
-                                    ? Icons.keyboard_arrow_up
-                                    : Icons.keyboard_arrow_down_rounded,
-                                size: 26,
-                                color: isExpanded ? Colors.teal : Colors.black,
-                              )),
-                        );
-                      }
-
-                      bool isSelectedColor =
-                          widget.selectedColor == widget.colors[i];
-                      return ColorCard(
-                        onTap: (color) {
-                          // TODO:  Remove this tight coupling
-                          _tool.color = color;
-                          widget.onColorSelected!(widget.selectedColor);
-                        },
-                        color: widget.colors[i],
-                        isSelected: isSelectedColor,
-                      );
-                    })
+                    i == colorsLength
+                        ? InkWell(
+                            onTap: () {
+                              isExpandedNotifier.value = !isExpanded;
+                            },
+                            child: Container(
+                                height: 48,
+                                width: 48,
+                                margin: const EdgeInsets.only(left: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Icon(
+                                  isExpanded
+                                      ? Icons.keyboard_arrow_up
+                                      : Icons.keyboard_arrow_down_rounded,
+                                  size: 26,
+                                  color:
+                                      isExpanded ? Colors.teal : Colors.black,
+                                )),
+                          )
+                        : ColorCard(
+                            onTap: (color) {
+                              widget.onColorSelected!(color);
+                            },
+                            color: widget.colors[i],
+                            isSelected:
+                                widget.selectedColor == widget.colors[i],
+                          )
+                  // })
                 ],
               ),
             ],

@@ -5,8 +5,11 @@ import 'package:paint_redesigned/models/color.dart';
 /// Model class to maintain state of the explorer
 class Explorer extends ChangeNotifier {
   List<Color> _recents = [];
+
   String _aspectRatio = "1:1";
+
   Color _color = Colors.white;
+
   String get aspectRatio => _aspectRatio;
 
   set aspectRatio(String value) {
@@ -18,7 +21,6 @@ class Explorer extends ChangeNotifier {
 
   set color(Color value) {
     _color = value;
-    print('length of recents: ${_recents.length}');
     if (!_recents.contains(value)) {
       _recents.insert(0, value);
     } else {

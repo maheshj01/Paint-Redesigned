@@ -118,13 +118,14 @@ class _SizeDrawerState extends State<SizeDrawer> {
   final isExpandedNotifier = ValueNotifier(false);
 
   late Explorer _toolbarProvider;
+  Color selectedColor = Colors.white;
   @override
   Widget build(BuildContext context) {
     final _length = aspectRatios.length;
     final _values = aspectRatios.values;
     final _keys = aspectRatios.keys;
 
-    _toolbarProvider = Provider.of<Explorer>(context, listen: false);
+    _toolbarProvider = Provider.of<Explorer>(context, listen: true);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,7 +173,7 @@ class _SizeDrawerState extends State<SizeDrawer> {
               ],
             ),
           ),
-         const DrawerSubTitle('Recents'),
+          const DrawerSubTitle('Recents'),
           Consumer<Explorer>(builder: (context, Explorer _tool, Widget? child) {
             final length = _tool.recents.length > noOfRecentColors
                 ? noOfRecentColors
@@ -194,7 +195,7 @@ class _SizeDrawerState extends State<SizeDrawer> {
                     child: Container(
                       height: 30,
                       width: 30,
-                      margin:const EdgeInsets.symmetric(horizontal: 4),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
                         color: recents[index],
                         shape: BoxShape.circle,
@@ -207,17 +208,16 @@ class _SizeDrawerState extends State<SizeDrawer> {
               // width: 200,
             );
           }),
-          Consumer<Explorer>(builder: (context, Explorer _tool, Widget? child) {
-            return ColorSelector(
-              selectedColor: _tool.color,
-              title: 'Background',
-              colors: canvasBackgroundColors,
-              isExpanded: false,
-              onColorSelected: (_color) {
-                _colorController.text = _color.toHex();
-              },
-            );
-          }),
+          ColorSelector(
+            selectedColor: _toolbarProvider.color,
+            title: 'Background',
+            colors: canvasBackgroundColors,
+            isExpanded: false,
+            onColorSelected: (_color) {
+              _colorController.text = _color.toHex();
+              _toolbarProvider.color = _color;
+            },
+          )
         ],
       ),
     );
@@ -233,7 +233,7 @@ class DrawerSubTitle extends StatelessWidget {
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
-        padding:const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
         child: Text(
           text,
           style: Theme.of(context)
@@ -287,7 +287,7 @@ class _ColorFieldState extends State<ColorField> {
 }
 
 class ColorCard extends StatelessWidget {
- const ColorCard(
+  const ColorCard(
       {Key? key,
       required this.color,
       required this.isSelected,
@@ -338,7 +338,7 @@ class ColorCard extends StatelessWidget {
 
 /// Card Layout for Aspect Ratio of Canvas
 class AspecRatioCard extends StatelessWidget {
- const AspecRatioCard(
+  const AspecRatioCard(
       {Key? key,
       required this.aspectRatioKey,
       required this.aspectRatioValue,
@@ -357,7 +357,7 @@ class AspecRatioCard extends StatelessWidget {
         height: aspectRatioCardSize,
         width: aspectRatioCardSize,
         child: Container(
-          padding:const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           alignment: Alignment.center,
           child: InkWell(
             onTap: () => onTap!(aspectRatioKey),
@@ -368,7 +368,7 @@ class AspecRatioCard extends StatelessWidget {
                     color: isSelected ? Colors.teal : Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        offset:const Offset(2, 2),
+                        offset: const Offset(2, 2),
                         color: isSelected
                             ? Colors.teal.withOpacity(0.5)
                             : Colors.black.withOpacity(0.1),
