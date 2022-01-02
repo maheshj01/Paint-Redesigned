@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'point.dart';
 import 'package:paint_redesigned/cursor.dart';
 import 'package:flutter/material.dart';
 
@@ -210,13 +208,3 @@ class _PathHistory {
     canvas.restore();
   }
 }
-
-class PointController {
-  final StreamController<List<Point?>> controller =
-      StreamController<List<Point?>>.broadcast();
-  void dispose() {
-    controller.close();
-  }
-}
-
-PointController points = PointController();

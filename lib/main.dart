@@ -1,6 +1,5 @@
 import 'package:paint_redesigned/canvas.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
-import 'package:paint_redesigned/point.dart';
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/toolbar_view.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +17,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<Point>(create: (_) => Point()),
         ChangeNotifierProvider<CanvasNotifier>(create: (_) => CanvasNotifier()),
         ChangeNotifierProvider<BrushNotifier>(create: (_) => BrushNotifier()),
         ChangeNotifierProvider<Toolbar>(create: (_) => Toolbar()),
