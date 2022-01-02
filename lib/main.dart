@@ -1,3 +1,4 @@
+import 'package:paint_redesigned/whiteboard.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:paint_redesigned/point.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class _PaintHomeState extends State<PaintHome> {
             children: const [
               Expanded(child: CanvasBuilder()),
               SizedBox(
-                width: 300,
+                width: explorerWidth,
               )
             ],
           ),
@@ -118,7 +119,7 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                             spreadRadius: 4,
                           )
                         ]),
-                        child: Container(),
+                        child: const WhiteBoard(),
                       ),
                     ),
                   );

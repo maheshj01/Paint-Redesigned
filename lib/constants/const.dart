@@ -39,3 +39,7 @@ List<Color> canvasBackgroundColors = [
 
 const int noOfRecentColors = 5;
 const int visibleColors = 7;
+const double explorerWidth = 300.0;
+const double maxPadding = 16.0;
+const double standardPadding = 8.0;
+const double minPadding = 4.0;

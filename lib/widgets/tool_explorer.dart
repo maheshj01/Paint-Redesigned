@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/constants/const.dart';
-import 'package:paint_redesigned/models/brush.dart';
 import 'package:paint_redesigned/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:paint_redesigned/utils/utils.dart';
@@ -61,7 +60,7 @@ class _ToolExplorerState extends State<ToolExplorer>
   Widget build(BuildContext context) {
     final _explorer = Provider.of<CanvasNotifier>(context, listen: false);
     return Container(
-        width: 300,
+        width: explorerWidth,
         color: drawerBackgroundColor,
         child:
             Consumer<Toolbar>(builder: (context, Toolbar tool, Widget? child) {
@@ -157,8 +156,8 @@ class _SizeDrawerState extends State<SizeDrawer> {
           ),
           Padding(
             padding: const EdgeInsets.only(
-              right: 16.0,
-              top: 16.0,
+              right: maxPadding,
+              top: maxPadding,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -240,7 +239,7 @@ class DrawerSubTitle extends StatelessWidget {
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
+        padding: const EdgeInsets.all(maxPadding),
         child: Text(
           text,
           style: Theme.of(context)
@@ -394,11 +393,13 @@ class ColorDrawer extends StatefulWidget {
 }
 
 class _ColorDrawerState extends State<ColorDrawer> {
+  late BrushNotifier _brush;
   @override
   Widget build(BuildContext context) {
-    final _brush = Provider.of<BrushNotifier>(context);
+    _brush = Provider.of<BrushNotifier>(context);
     return Column(
       children: [
+        BrushSizer(),
         ColorSelector(
           selectedColor: _brush.color,
           title: 'Colors',
@@ -408,6 +409,50 @@ class _ColorDrawerState extends State<ColorDrawer> {
             _brush.color = _color;
           },
         )
+      ],
+    );
+  }
+}
+
+class BrushSizer extends StatelessWidget {
+  const BrushSizer({Key? key}) : super(key: key);
+  final double _sliderMin = 1.0;
+  final double _sliderMax = 10.0;
+  @override
+  Widget build(BuildContext context) {
+    final _brush = Provider.of<BrushNotifier>(context);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: maxPadding),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              DrawerSubTitle('Pointer Size: ${_brush.size.toInt().toString()}'),
+              Container(
+                height: _brush.size * 2.2,
+                width: _brush.size * 2.2,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(
+                width: 30,
+              )
+            ],
+          ),
+        ),
+        Slider(
+            value: _brush.size,
+            min: _sliderMin,
+            max: _sliderMax,
+            label: 'Size',
+            onChanged: (value) {
+              _brush.size = value;
+            }),
       ],
     );
   }

@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:paint_redesigned/appbar.dart';
 import 'package:paint_redesigned/cursor.dart';
 import 'package:paint_redesigned/dotpainter.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:paint_redesigned/models/brush.dart';
 import 'package:provider/provider.dart';
 
 import 'point.dart';
@@ -22,195 +20,79 @@ class _WhiteBoardState extends State<WhiteBoard>
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(duration: const Duration(milliseconds: 500), vsync: this)
-          ..addListener(() => setState(() {}));
-    animation = Tween(begin: -200.0, end: 0.0).animate(_controller);
-    paint = Paint();
     WidgetsBinding.instance!.addPostFrameCallback((x) {
       points.controller.sink.add([]);
     });
   }
 
-  void changeColor(Color color) {
-    setState(() => pickerColor = color);
-  }
-
-  void onPenTapped() {
-    if (_controller.status == AnimationStatus.completed) {
-      _controller.reverse();
-      return;
-    }
-    _controller.forward();
-    return;
-  }
-
-  double? paintSize() {
-    if (_sliderValue < 3) {
-      return _sliderValue * 3;
-    } else if (_sliderValue < 8) {
-      return _sliderValue * 2;
-    }
-    if (_sliderValue <= 10) return _sliderValue * 1.5;
-  }
-
-  Widget _topPaintBar() {
-    return Align(
-      alignment: Alignment.topRight,
-      child: Transform.translate(
-        offset: Offset(
-          0,
-          animation.value,
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          height: 100,
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.15),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const Text('Pointer Size:  '),
-              Text(_sliderValue.toInt().toString()),
-              Slider(
-                  value: _sliderValue,
-                  min: _sliderMin,
-                  max: _sliderMax,
-                  label: 'Size',
-                  onChanged: (value) {
-                    setState(() {
-                      _sliderValue = value;
-                    });
-                  }),
-              Container(
-                width: 30,
-                height: 30,
-                alignment: Alignment.center,
-                child: Container(
-                  height: paintSize(),
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Color pickerColor = Colors.black;
   BlendMode blendMode = BlendMode.softLight;
-  final double _sliderMin = 1.0;
-  final double _sliderMax = 10.0;
-  double _sliderValue = 3;
-  late AnimationController _controller;
-  late Animation<double> animation;
   Paint? paint;
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<Point>(context, listen: false);
-    return Scaffold(
-      appBar: AppBarWidget(
-          selectedColor: pickerColor,
-          onColorTapped: () {
-            showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                    title: const Text('Pick a color!'),
-                    content: SingleChildScrollView(
-                      child: ColorPicker(
-                        pickerColor: pickerColor,
-                        onColorChanged: changeColor,
-                        labelTypes: const [ColorLabelType.hex],
-                        pickerAreaHeightPercent: 0.8,
-                      ),
-                    )));
-          },
-          onEraserTapped: () {
-            List<Point?> localList = store.points;
-            setState(() {
-              localList.clear();
-            });
-            points.controller.sink.add(localList);
-            store.points = localList;
-          },
-          onPenTapped: onPenTapped),
-      body: GestureDetector(
-        onTap: () {
-          if (_controller.status == AnimationStatus.completed) {
-            _controller.reverse();
-            return;
-          }
-        },
-        child: Stack(
-          children: <Widget>[
-            GestureDetector(
-              onPanStart: (startDetails) {
-                List<Point?> localList = store.points;
-                final renderBox = context.findRenderObject() as RenderBox;
-                final localPosition =
-                    renderBox.globalToLocal(startDetails.globalPosition);
+    return Stack(
+      children: <Widget>[
+        Consumer<BrushNotifier>(
+            builder: (context, BrushNotifier brush, Widget? child) {
+          return GestureDetector(
+            onPanStart: (startDetails) {
+              List<Point?> localList = store.points;
+              final renderBox = context.findRenderObject() as RenderBox;
+              final localPosition =
+                  renderBox.globalToLocal(startDetails.globalPosition);
 
-                localList.add(Point(
-                    paint: Paint()
-                      ..color = pickerColor
-                      ..strokeWidth = _sliderValue,
-                    position: localPosition));
-                points.controller.sink.add(localList);
-                store.points = localList;
-              },
-              onPanUpdate: (updateDetails) {
-                List<Point?> localList = store.points;
-                final renderBox = context.findRenderObject() as RenderBox;
-                final localPosition =
-                    renderBox.globalToLocal(updateDetails.globalPosition);
-                localList.add(Point(
-                    paint: Paint()
-                      ..color = pickerColor
-                      ..strokeWidth = _sliderValue,
-                    position: localPosition));
-                points.controller.sink.add(localList);
-                store.points = localList;
-              },
-              onPanEnd: (downDetails) {
-                List<Point?> localList = store.points;
-                localList.add(null);
-                points.controller.sink.add(localList);
-                store.points = localList;
-              },
-              child: StreamBuilder<List<Point?>>(
-                  initialData: const [],
-                  stream: points.controller.stream,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Point?>> snapshot) {
-                    return Cursor(
-                      cursorStyle: Cursor.crosshair,
-                      child: CustomPaint(
-                        painter: WhiteBoardPainter(
-                            points: snapshot.data, blendMode: blendMode),
-                        child: Container(),
-                      ),
-                    );
-                  }),
-            ),
-            CustomPaint(
-              painter: DotPainter(),
-            ),
-            _topPaintBar()
-          ],
+              localList.add(Point(
+                  paint: Paint()
+                    ..color = brush.color
+                    ..strokeWidth = brush.size,
+                  position: localPosition));
+              points.controller.sink.add(localList);
+              store.points = localList;
+            },
+            onPanUpdate: (updateDetails) {
+              List<Point?> localList = store.points;
+              final renderBox = context.findRenderObject() as RenderBox;
+              final localPosition =
+                  renderBox.globalToLocal(updateDetails.globalPosition);
+              localList.add(Point(
+                  paint: Paint()
+                    ..color = brush.color
+                    ..strokeWidth = brush.size,
+                  position: localPosition));
+              points.controller.sink.add(localList);
+              store.points = localList;
+            },
+            onPanEnd: (downDetails) {
+              List<Point?> localList = store.points;
+              localList.add(null);
+              points.controller.sink.add(localList);
+              store.points = localList;
+            },
+            child: StreamBuilder<List<Point?>>(
+                initialData: const [],
+                stream: points.controller.stream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<Point?>> snapshot) {
+                  return Cursor(
+                    cursorStyle: Cursor.crosshair,
+                    child: CustomPaint(
+                      painter: WhiteBoardPainter(
+                          points: snapshot.data, blendMode: blendMode),
+                      child: Container(),
+                    ),
+                  );
+                }),
+          );
+        }),
+        CustomPaint(
+          painter: DotPainter(),
         ),
-      ),
+      ],
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 }
@@ -252,10 +134,8 @@ class WhiteBoardPainter extends CustomPainter {
           points![i]?.position != null &&
           points![i + 1]?.position != null) {
         canvas.drawLine(
-            Offset(points![i]!.position!.dx,
-                points![i]!.position!.dy - kToolbarHeight),
-            Offset(points![i + 1]!.position!.dx,
-                points![i + 1]!.position!.dy - kToolbarHeight),
+            Offset(points![i]!.position!.dx, points![i]!.position!.dy),
+            Offset(points![i + 1]!.position!.dx, points![i + 1]!.position!.dy),
             points![i]!.paint!);
       }
     }
