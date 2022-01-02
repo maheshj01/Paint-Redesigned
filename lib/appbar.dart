@@ -5,6 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
+  AppBarWidget(
+      {Key? key,
+      this.title,
+      this.leading,
+      this.context,
+      this.actions,
+      this.onColorTapped,
+      this.selectedColor,
+      this.onEraserTapped,
+      this.onPenTapped})
+      : super(key: key);
+
   final String? title;
   final Widget? leading;
   Color? selectedColor;
@@ -19,17 +31,6 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
     return Container(color: selectedColor, width: 35, height: 35);
   }
 
-  AppBarWidget(
-      {Key? key,
-      this.title,
-      this.leading,
-      this.context,
-      this.actions,
-      this.onColorTapped,
-      this.selectedColor,
-      this.onEraserTapped,
-      this.onPenTapped})
-      : super(key: key);
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<Point>(
@@ -38,7 +39,7 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
     );
 
     return StreamBuilder<List<Point?>>(
-      initialData: const [],
+        initialData: const [],
         stream: points.controller.stream,
         builder: (BuildContext context, AsyncSnapshot<List<Point?>> snapshot) {
           return Container(

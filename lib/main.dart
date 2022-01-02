@@ -1,4 +1,3 @@
-import 'package:paint_redesigned/models/brush.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:paint_redesigned/point.dart';
 import 'package:flutter/material.dart';
