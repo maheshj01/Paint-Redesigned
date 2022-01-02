@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/constants/constants.dart';
-import 'package:paint_redesigned/models/explorer.dart';
 import 'package:paint_redesigned/widgets/widgets.dart';
-import 'package:provider/provider.dart';
 
 class ColorSelector extends StatefulWidget {
   ColorSelector(

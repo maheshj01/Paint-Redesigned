@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/constants/const.dart';
+import 'package:paint_redesigned/models/brush.dart';
 import 'package:paint_redesigned/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:paint_redesigned/utils/utils.dart';
@@ -58,7 +59,7 @@ class _ToolExplorerState extends State<ToolExplorer>
 
   @override
   Widget build(BuildContext context) {
-    final _explorer = Provider.of<Explorer>(context, listen: false);
+    final _explorer = Provider.of<CanvasNotifier>(context, listen: false);
     return Container(
         width: 300,
         color: drawerBackgroundColor,
@@ -122,7 +123,7 @@ class _SizeDrawerState extends State<SizeDrawer> {
 
   final isExpandedNotifier = ValueNotifier(false);
 
-  late Explorer _toolbarProvider;
+  late CanvasNotifier _toolbarProvider;
   Color selectedColor = Colors.white;
   @override
   Widget build(BuildContext context) {
@@ -130,7 +131,7 @@ class _SizeDrawerState extends State<SizeDrawer> {
     final _values = aspectRatios.values;
     final _keys = aspectRatios.keys;
 
-    _toolbarProvider = Provider.of<Explorer>(context, listen: true);
+    _toolbarProvider = Provider.of<CanvasNotifier>(context, listen: true);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -139,8 +140,8 @@ class _SizeDrawerState extends State<SizeDrawer> {
           Wrap(
             children: [
               for (var i = 0; i < _length; i++)
-                Consumer<Explorer>(
-                    builder: (context, Explorer _tool, Widget? child) {
+                Consumer<CanvasNotifier>(
+                    builder: (context, CanvasNotifier _tool, Widget? child) {
                   bool isSelectedAspectRatio =
                       _tool.aspectRatio == _keys.elementAt(i);
                   return AspecRatioCard(
@@ -179,7 +180,8 @@ class _SizeDrawerState extends State<SizeDrawer> {
             ),
           ),
           const DrawerSubTitle('Recents'),
-          Consumer<Explorer>(builder: (context, Explorer _tool, Widget? child) {
+          Consumer<CanvasNotifier>(
+              builder: (context, CanvasNotifier _tool, Widget? child) {
             final length = _tool.recents.length > noOfRecentColors
                 ? noOfRecentColors
                 : _tool.recents.length;
@@ -244,7 +246,7 @@ class DrawerSubTitle extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .subtitle2!
-              .copyWith(color: Colors.black),
+              .copyWith(color: Colors.grey),
         ),
       ),
     );
@@ -252,9 +254,10 @@ class DrawerSubTitle extends StatelessWidget {
 }
 
 class ColorField extends StatefulWidget {
-  ColorField({Key? key, required this.controller, this.onTap, this.onChange})
+  const ColorField(
+      {Key? key, required this.controller, this.onTap, this.onChange})
       : super(key: key);
-  TextEditingController controller;
+  final TextEditingController controller;
   final Function? onTap;
   final Function(String)? onChange;
 
@@ -393,15 +396,16 @@ class ColorDrawer extends StatefulWidget {
 class _ColorDrawerState extends State<ColorDrawer> {
   @override
   Widget build(BuildContext context) {
+    final _brush = Provider.of<BrushNotifier>(context);
     return Column(
       children: [
         ColorSelector(
-          selectedColor: Colors.redAccent,
+          selectedColor: _brush.color,
           title: 'Colors',
-          colors: Colors.accents,
-          isExpanded: false,
+          colors: const [Colors.black, ...Colors.accents],
+          isExpanded: true,
           onColorSelected: (_color) {
-            // _colorController.text = _color.toHex();
+            _brush.color = _color;
           },
         )
       ],

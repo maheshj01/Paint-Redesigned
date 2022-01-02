@@ -3,7 +3,7 @@ import 'package:paint_redesigned/constants/const.dart';
 import 'package:paint_redesigned/models/color.dart';
 
 /// Model class to maintain state of the explorer
-class Explorer extends ChangeNotifier {
+class CanvasNotifier extends ChangeNotifier {
   List<Color> _recents = [];
 
   String _aspectRatio = "1:1";
@@ -52,8 +52,8 @@ class CanvasColor extends ColorExplorer {
   }
 
   @override
-  void onChange(Color p1) {
+  void onChange(Color color) {
     // TODO: implement onChange
-    super.onChange(p1);
+    super.onChange(color);
   }
 }

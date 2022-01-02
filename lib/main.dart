@@ -1,3 +1,4 @@
+import 'package:paint_redesigned/models/brush.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:paint_redesigned/point.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<Point>(create: (_) => Point()),
-        ChangeNotifierProvider<Explorer>(create: (_) => Explorer()),
+        ChangeNotifierProvider<CanvasNotifier>(create: (_) => CanvasNotifier()),
+        ChangeNotifierProvider<BrushNotifier>(create: (_) => BrushNotifier()),
         ChangeNotifierProvider<Toolbar>(create: (_) => Toolbar()),
       ],
       child: MaterialApp(
@@ -100,8 +102,8 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                 scaleEnabled: true,
                 minScale: 0.01,
                 maxScale: 5.0,
-                child: Consumer<Explorer>(
-                    builder: (context, Explorer _tool, Widget? child) {
+                child: Consumer<CanvasNotifier>(
+                    builder: (context, CanvasNotifier _tool, Widget? child) {
                   return AspectRatio(
                     aspectRatio: aspectRatios[_tool.aspectRatio]!,
                     child: Container(
