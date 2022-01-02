@@ -1,4 +1,4 @@
-import 'package:paint_redesigned/whiteboard.dart';
+import 'package:paint_redesigned/canvas.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:paint_redesigned/point.dart';
 import 'package:flutter/material.dart';
@@ -88,9 +88,16 @@ class CanvasBuilder extends StatefulWidget {
 }
 
 class _CanvasBuilderState extends State<CanvasBuilder> {
+  late CanvasController _canvasController;
+
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor = Colors.grey[300]!;
+    final _brushNotifier = Provider.of<BrushNotifier>(context, listen: false);
+    final _canvasNotifier = Provider.of<CanvasNotifier>(context, listen: false);
+    _canvasController = CanvasController();
+    _canvasController.brushColor = _brushNotifier.color;
+    _canvasController.backgroundColor = _canvasNotifier.color;
     return Material(
       color: backgroundColor,
       child: Stack(
@@ -110,17 +117,23 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                       color: backgroundColor,
                       padding: const EdgeInsets.all(100),
                       child: Container(
-                        decoration:
-                            BoxDecoration(color: _tool.color, boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(5, 5),
-                            spreadRadius: 4,
-                          )
-                        ]),
-                        child: const WhiteBoard(),
-                      ),
+                          decoration:
+                              BoxDecoration(color: _tool.color, boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 12,
+                              offset: const Offset(5, 5),
+                              spreadRadius: 4,
+                            )
+                          ]),
+                          child: Consumer2<BrushNotifier, CanvasNotifier>(
+                              builder: (context, brush, canvas, child) {
+                            _canvasController.brushColor = brush.color;
+                            _canvasController.backgroundColor = canvas.color;
+                            _canvasController.strokeWidthh = brush.size;
+                            return CanvasWidget(
+                                canvasController: _canvasController);
+                          })),
                     ),
                   );
                 })),

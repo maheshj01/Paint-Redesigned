@@ -50,6 +50,7 @@ class _ToolExplorerState extends State<ToolExplorer>
       case Tool.size:
         return 0;
       case Tool.brush:
+      case Tool.eraser:
         return 1;
       default:
         return 0;
@@ -76,7 +77,6 @@ class _ToolExplorerState extends State<ToolExplorer>
               builder: (BuildContext context, Widget? child) {
                 return Transform.translate(
                   offset: Offset(_animation.value, 0.0),
-                  // offset: Offset(_animation.value, 0)
                   child: IndexedStack(
                     index: index(tool.activeTool),
                     children: [

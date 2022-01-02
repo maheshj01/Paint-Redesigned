@@ -11,8 +11,7 @@ class ToolBarView extends StatefulWidget {
 
 class _ToolBarViewState extends State<ToolBarView> {
   Widget _toolIcon(Tool tool, IconData icon) {
-    return Consumer<Toolbar>(
-        builder: (context, Toolbar _tool, Widget? child) {
+    return Consumer<Toolbar>(builder: (context, Toolbar _tool, Widget? child) {
       bool isSelected = _tool.activeTool == tool;
       return IconButton(
           tooltip: tool.name,
@@ -77,6 +76,7 @@ class _ToolBarViewState extends State<ToolBarView> {
                 children: [
                   _toolIcon(Tool.size, Icons.crop),
                   _toolIcon(Tool.brush, Icons.brush),
+                  _toolIcon(Tool.eraser, Icons.radio_button_checked),
                 ],
               ))
         ],

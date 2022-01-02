@@ -5,7 +5,7 @@ class BrushNotifier extends ChangeNotifier {
 
   Color _color = Colors.black;
 
-  double _size = 10;
+  double _size = 4.0;
 
   List<Color> get recents => _recents;
 

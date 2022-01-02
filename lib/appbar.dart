@@ -1,6 +1,6 @@
 import 'package:paint_redesigned/cursor.dart';
 import 'package:paint_redesigned/point.dart';
-import 'package:paint_redesigned/whiteboard.dart';
+import 'package:paint_redesigned/canvas.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
