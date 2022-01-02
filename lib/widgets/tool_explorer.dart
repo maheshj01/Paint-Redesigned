@@ -64,6 +64,11 @@ class _ToolExplorerState extends State<ToolExplorer>
         color: drawerBackgroundColor,
         child:
             Consumer<Toolbar>(builder: (context, Toolbar tool, Widget? child) {
+          if (tool.activeTool == Tool.size) {
+            _tween.begin = -100.0;
+          } else {
+            _tween.begin = 100.0;
+          }
           _controller.reset();
           _controller.forward();
           return AnimatedBuilder(
@@ -302,37 +307,28 @@ class ColorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: add tick animation
-
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Consumer<Explorer>(
-        builder: (context, Explorer tool, Widget? child) {
-          final bool isChecked = tool.color == color;
-          // if (isChecked && child == null) {}
-          return InkWell(
-            onTap: () => onTap!(color),
-            child: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: child != null
-                  ? child
-                  : isChecked
-                      ? Icon(
-                          Icons.check,
-                          color: color == Colors.white
-                              ? Colors.black
-                              : Colors.white,
-                        )
-                      : null,
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: InkWell(
+          onTap: () => onTap!(color),
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(8.0),
             ),
-          );
-        },
-      ),
-    );
+            child: child != null
+                ? child
+                : isSelected
+                    ? Icon(
+                        Icons.check,
+                        color:
+                            color == Colors.white ? Colors.black : Colors.white,
+                      )
+                    : null,
+          ),
+        ));
   }
 }
 
@@ -400,7 +396,7 @@ class _ColorDrawerState extends State<ColorDrawer> {
     return Column(
       children: [
         ColorSelector(
-          selectedColor: Colors.blueAccent,
+          selectedColor: Colors.redAccent,
           title: 'Colors',
           colors: Colors.accents,
           isExpanded: false,

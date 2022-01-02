@@ -49,8 +49,8 @@ class _PaintHomeState extends State<PaintHome> {
 
     return Material(
       color: Colors.transparent,
-      child: Row(
-        children: const <Widget>[
+      child: Stack(
+        children: <Widget>[
           // NavigationRail(
           //   selectedIndex: _selectedIndex,
           //   onDestinationSelected: (int index) {
@@ -63,8 +63,15 @@ class _PaintHomeState extends State<PaintHome> {
           // ),
           // const VerticalDivider(thickness: 1, width: 1),
           // Expanded(child: _tabsViewBuilder.elementAt(_selectedIndex)),
-          Expanded(child: CanvasBuilder()),
-          ToolExplorer()
+          const Align(alignment: Alignment.centerRight, child: ToolExplorer()),
+          Row(
+            children: const [
+              Expanded(child: CanvasBuilder()),
+              SizedBox(
+                width: 300,
+              )
+            ],
+          ),
         ],
       ),
     );
@@ -84,47 +91,43 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
     final Color backgroundColor = Colors.grey[300]!;
     return Material(
       color: backgroundColor,
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 50,
-            ),
-            const ToolBarView(),
-            const SizedBox(
-              height: 20,
-            ),
-            Flexible(
-              child: InteractiveViewer(
-                  scaleEnabled: true,
-                  minScale: 0.01,
-                  maxScale: 5.0,
-                  child: Consumer<Explorer>(
-                      builder: (context, Explorer _tool, Widget? child) {
-                    return AspectRatio(
-                      aspectRatio: aspectRatios[_tool.aspectRatio]!,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 40.0),
+            child: InteractiveViewer(
+                scaleEnabled: true,
+                minScale: 0.01,
+                maxScale: 5.0,
+                child: Consumer<Explorer>(
+                    builder: (context, Explorer _tool, Widget? child) {
+                  return AspectRatio(
+                    aspectRatio: aspectRatios[_tool.aspectRatio]!,
+                    child: Container(
+                      color: backgroundColor,
+                      padding: const EdgeInsets.all(100),
                       child: Container(
-                        color: backgroundColor,
-                        padding: const EdgeInsets.all(100),
-                        child: Container(
-                          decoration:
-                              BoxDecoration(color: _tool.color, boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              blurRadius: 12,
-                              offset: const Offset(5, 5),
-                              spreadRadius: 4,
-                            )
-                          ]),
-                          child: Container(),
-                        ),
+                        decoration:
+                            BoxDecoration(color: _tool.color, boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(5, 5),
+                            spreadRadius: 4,
+                          )
+                        ]),
+                        child: Container(),
                       ),
-                    );
-                  })),
-            ),
-          ],
-        ),
+                    ),
+                  );
+                })),
+          ),
+          Container(
+              padding: const EdgeInsets.only(top: 50),
+              alignment: Alignment.topCenter,
+              child: const ToolBarView()),
+        ],
       ),
     );
   }
