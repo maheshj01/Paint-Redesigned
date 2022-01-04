@@ -3,7 +3,11 @@ import 'package:provider/provider.dart';
 import 'models/models.dart';
 
 class ToolBarView extends StatefulWidget {
-  const ToolBarView({Key? key}) : super(key: key);
+  final void Function(Tool)? onToolChange;
+  const ToolBarView({
+    this.onToolChange,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _ToolBarViewState createState() => _ToolBarViewState();
@@ -15,9 +19,7 @@ class _ToolBarViewState extends State<ToolBarView> {
       bool isSelected = _tool.activeTool == tool;
       return IconButton(
           tooltip: tool.name,
-          onPressed: () {
-            _toolProvider.activeTool = tool;
-          },
+          onPressed: () => widget.onToolChange!(tool),
           icon: Icon(
             icon,
             color: isSelected ? Colors.teal : Colors.grey,
@@ -25,12 +27,10 @@ class _ToolBarViewState extends State<ToolBarView> {
     });
   }
 
-  late Toolbar _toolProvider;
-
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
-    _toolProvider = Provider.of<Toolbar>(context, listen: false);
+
     return Container(
       height: 60,
       width: _size.width * 0.5,
@@ -56,7 +56,7 @@ class _ToolBarViewState extends State<ToolBarView> {
                 ),
                 IconButton(
                   tooltip: 'Undo',
-                  onPressed: () {},
+                  onPressed: () => widget.onToolChange!(Tool.undo),
                   icon: const Icon(
                     Icons.undo,
                     color: Colors.blue,
@@ -64,7 +64,7 @@ class _ToolBarViewState extends State<ToolBarView> {
                 ),
                 IconButton(
                   tooltip: 'Redo',
-                  onPressed: () {},
+                  onPressed: () => widget.onToolChange!(Tool.redo),
                   icon: const Icon(Icons.redo, color: Colors.blue),
                 )
               ],
@@ -74,7 +74,7 @@ class _ToolBarViewState extends State<ToolBarView> {
               flex: 7,
               child: Row(
                 children: [
-                  _toolIcon(Tool.size, Icons.crop),
+                  _toolIcon(Tool.canvas, Icons.crop),
                   _toolIcon(Tool.brush, Icons.brush),
                   _toolIcon(Tool.eraser, Icons.radio_button_checked),
                 ],

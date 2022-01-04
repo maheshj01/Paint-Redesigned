@@ -93,6 +93,7 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
     final Color backgroundColor = Colors.grey[300]!;
     final _brushNotifier = Provider.of<BrushNotifier>(context, listen: false);
     final _canvasNotifier = Provider.of<CanvasNotifier>(context, listen: false);
+    final _toolNotifier = Provider.of<Toolbar>(context, listen: false);
     _canvasController = CanvasController();
     _canvasController.brushColor = _brushNotifier.color;
     _canvasController.backgroundColor = _canvasNotifier.color;
@@ -139,7 +140,11 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
           Container(
               padding: const EdgeInsets.only(top: 50),
               alignment: Alignment.topCenter,
-              child: const ToolBarView()),
+              child: ToolBarView(
+                onToolChange: (Tool newTool) {
+                  _toolNotifier.activeTool = newTool;
+                },
+              )),
         ],
       ),
     );

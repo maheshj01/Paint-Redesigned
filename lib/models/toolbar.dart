@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-enum Tool { size, color, eraser, text, brush }
+enum Tool { canvas, color, eraser, text, brush, undo, redo }
 
 class Toolbar extends ChangeNotifier {
-  Tool _activeTool = Tool.size;
+  Tool _activeTool = Tool.canvas;
   Tool get activeTool => _activeTool;
 
   set activeTool(Tool value) {

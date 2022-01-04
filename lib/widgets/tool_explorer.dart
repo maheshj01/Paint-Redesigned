@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/constants/const.dart';
+import 'package:paint_redesigned/models/models.dart';
 import 'package:paint_redesigned/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:paint_redesigned/utils/utils.dart';
-import '../models/models.dart';
 
 class ToolExplorer extends StatefulWidget {
   const ToolExplorer({Key? key}) : super(key: key);
@@ -47,7 +47,7 @@ class _ToolExplorerState extends State<ToolExplorer>
 
   int index(Tool _tool) {
     switch (_tool) {
-      case Tool.size:
+      case Tool.canvas:
         return 0;
       case Tool.brush:
       case Tool.eraser:
@@ -65,7 +65,7 @@ class _ToolExplorerState extends State<ToolExplorer>
         color: drawerBackgroundColor,
         child:
             Consumer<Toolbar>(builder: (context, Toolbar tool, Widget? child) {
-          if (tool.activeTool == Tool.size) {
+          if (tool.activeTool == Tool.canvas) {
             _tween.begin = -100.0;
           } else {
             _tween.begin = 100.0;
@@ -81,7 +81,7 @@ class _ToolExplorerState extends State<ToolExplorer>
                     index: index(tool.activeTool),
                     children: [
                       SizeDrawer(
-                        onSizeTap: (size) {
+                        onSizeChange: (size) {
                           _explorer.aspectRatio = size;
                         },
                       ),
@@ -95,8 +95,8 @@ class _ToolExplorerState extends State<ToolExplorer>
 }
 
 class SizeDrawer extends StatefulWidget {
-  const SizeDrawer({Key? key, this.onSizeTap}) : super(key: key);
-  final Function(String)? onSizeTap;
+  const SizeDrawer({Key? key, this.onSizeChange}) : super(key: key);
+  final Function(String)? onSizeChange;
 
   @override
   _SizeDrawerState createState() => _SizeDrawerState();
@@ -168,8 +168,9 @@ class _SizeDrawerState extends State<SizeDrawer> {
                   onTap: () {},
                   onChange: (newColor) {
                     try {
-                      if (newColor.isNotEmpty)
+                      if (newColor.isNotEmpty) {
                         _toolbarProvider.color = newColor.hexToColor();
+                      }
                     } catch (e) {
                       print(e);
                     }
@@ -399,7 +400,7 @@ class _ColorDrawerState extends State<ColorDrawer> {
     _brush = Provider.of<BrushNotifier>(context);
     return Column(
       children: [
-        BrushSizer(),
+        const BrushSizer(),
         ColorSelector(
           selectedColor: _brush.color,
           title: 'Colors',

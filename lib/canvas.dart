@@ -114,6 +114,7 @@ class CanvasController extends ChangeNotifier {
   }
 
   void undo() {
+    if (_pathHistory.isEmpty) return;
     _pathHistory.undo();
     notifyListeners();
   }
