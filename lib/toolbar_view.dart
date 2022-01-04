@@ -71,14 +71,18 @@ class _ToolBarViewState extends State<ToolBarView> {
             ),
           ),
           Expanded(
-              flex: 7,
+              flex: 6,
               child: Row(
                 children: [
                   _toolIcon(Tool.canvas, Icons.crop),
                   _toolIcon(Tool.brush, Icons.brush),
                   _toolIcon(Tool.eraser, Icons.radio_button_checked),
                 ],
-              ))
+              )),
+          _toolIcon(Tool.eraser, Icons.download),
+          const SizedBox(
+            width: 20,
+          )
         ],
       ),
     );

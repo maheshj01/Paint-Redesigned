@@ -80,12 +80,12 @@ class _ToolExplorerState extends State<ToolExplorer>
                   child: IndexedStack(
                     index: index(tool.activeTool),
                     children: [
-                      SizeDrawer(
+                      CanvasToolExplorer(
                         onSizeChange: (size) {
                           _explorer.aspectRatio = size;
                         },
                       ),
-                      const ColorDrawer()
+                      const PaintToolExplorer()
                     ],
                   ),
                 );
@@ -94,15 +94,15 @@ class _ToolExplorerState extends State<ToolExplorer>
   }
 }
 
-class SizeDrawer extends StatefulWidget {
-  const SizeDrawer({Key? key, this.onSizeChange}) : super(key: key);
+class CanvasToolExplorer extends StatefulWidget {
+  const CanvasToolExplorer({Key? key, this.onSizeChange}) : super(key: key);
   final Function(String)? onSizeChange;
 
   @override
-  _SizeDrawerState createState() => _SizeDrawerState();
+  _CanvasToolExplorerState createState() => _CanvasToolExplorerState();
 }
 
-class _SizeDrawerState extends State<SizeDrawer> {
+class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
   late TextEditingController _colorController;
 
   @override
@@ -386,14 +386,14 @@ class AspecRatioCard extends StatelessWidget {
   }
 }
 
-class ColorDrawer extends StatefulWidget {
-  const ColorDrawer({Key? key}) : super(key: key);
+class PaintToolExplorer extends StatefulWidget {
+  const PaintToolExplorer({Key? key}) : super(key: key);
 
   @override
-  _ColorDrawerState createState() => _ColorDrawerState();
+  _PaintToolExplorerState createState() => _PaintToolExplorerState();
 }
 
-class _ColorDrawerState extends State<ColorDrawer> {
+class _PaintToolExplorerState extends State<PaintToolExplorer> {
   late BrushNotifier _brush;
   @override
   Widget build(BuildContext context) {
