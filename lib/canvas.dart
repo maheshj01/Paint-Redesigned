@@ -120,6 +120,7 @@ class CanvasController extends ChangeNotifier {
   }
 
   void redo() {
+    if (_pathHistory.isUndoEmpty) return;
     _pathHistory.redo();
     notifyListeners();
   }
@@ -152,14 +153,18 @@ class CanvasPainter extends CustomPainter {
 
 class _PathHistory {
   final List<MapEntry<Path, Paint>> _paths;
+  final List<MapEntry<Path, Paint>> _undoHistory;
   Paint _paint;
   Paint _backgroundPaint;
 
   bool get isEmpty => _paths.isEmpty;
 
+  bool get isUndoEmpty => _undoHistory.isEmpty;
+
   /// inittialize defaults
   _PathHistory()
       : _paths = <MapEntry<Path, Paint>>[],
+        _undoHistory = <MapEntry<Path, Paint>>[],
         _backgroundPaint = Paint()
           ..blendMode = BlendMode.dstOver
           ..color = Colors.white,
@@ -173,14 +178,14 @@ class _PathHistory {
   }
 
   void undo() {
-    _paths.removeLast();
-
-    // TODO: save list of undo for redo
+    _undoHistory.add(_paths.removeLast());
   }
+  // TODO: _paths: [1,2,3,4,5]
+  //TODO: _redo [6,]
 
   void redo() {
     // TODO: to implement redo
-    _paths.add(MapEntry(_paths.last.key, _paths.last.value));
+    _paths.add(_undoHistory.removeLast());
   }
 
   void clear() {

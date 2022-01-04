@@ -51,18 +51,6 @@ class _PaintHomeState extends State<PaintHome> {
       color: Colors.transparent,
       child: Stack(
         children: <Widget>[
-          // NavigationRail(
-          //   selectedIndex: _selectedIndex,
-          //   onDestinationSelected: (int index) {
-          //     setState(() {
-          //       _selectedIndex = index;
-          //     });
-          //   },
-          //   labelType: NavigationRailLabelType.selected,
-          //   destinations: tabs,
-          // ),
-          // const VerticalDivider(thickness: 1, width: 1),
-          // Expanded(child: _tabsViewBuilder.elementAt(_selectedIndex)),
           const Align(alignment: Alignment.centerRight, child: ToolExplorer()),
           Row(
             children: const [
@@ -142,7 +130,24 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
               alignment: Alignment.topCenter,
               child: ToolBarView(
                 onToolChange: (Tool newTool) {
-                  _toolNotifier.activeTool = newTool;
+                  // TODO: call
+                  switch (newTool) {
+                    case Tool.brush:
+                      _toolNotifier.activeTool = Tool.brush;
+                      break;
+                    case Tool.canvas:
+                      _toolNotifier.activeTool = Tool.canvas;
+                      break;
+                    case Tool.download:
+                      break;
+                    case Tool.undo:
+                      _canvasController.undo();
+                      break;
+                    case Tool.redo:
+                      _canvasController.redo();
+                      break;
+                    default:
+                  }
                 },
               )),
         ],
