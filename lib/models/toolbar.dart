@@ -7,6 +7,7 @@ class Toolbar extends ChangeNotifier {
   Tool get activeTool => _activeTool;
 
   set activeTool(Tool value) {
+    if (_activeTool == value) return;
     _activeTool = value;
     notifyListeners();
   }
