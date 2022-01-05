@@ -146,6 +146,9 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                     case Tool.redo:
                       _canvasController.redo();
                       break;
+                    case Tool.eraser:
+                      _canvasController.clear();
+                      break;
                     default:
                   }
                 },
