@@ -27,9 +27,10 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
               primarySwatch: Colors.blue,
               visualDensity: VisualDensity.adaptivePlatformDensity,
-              hoverColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent),
+              // hoverColor: Colors.red,
+              // highlightColor: Colors.red,
+              // splashColor: Colors.red
+              iconTheme: IconThemeData(color: defaultIconColor)),
           home: const PaintHome()),
     );
   }
@@ -118,8 +119,11 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                             _canvasController.brushColor = brush.color;
                             _canvasController.backgroundColor = canvas.color;
                             _canvasController.strokeWidthh = brush.size;
-                            return CanvasWidget(
-                                canvasController: _canvasController);
+                            return MouseRegion(
+                              cursor: SystemMouseCursors.precise, 
+                              child: CanvasWidget(
+                                  canvasController: _canvasController),
+                            );
                           })),
                     ),
                   );
