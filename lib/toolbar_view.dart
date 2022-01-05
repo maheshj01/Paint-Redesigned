@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'constants/constants.dart';
 import 'models/models.dart';
 
 class ToolBarView extends StatefulWidget {
@@ -14,15 +15,17 @@ class ToolBarView extends StatefulWidget {
 }
 
 class _ToolBarViewState extends State<ToolBarView> {
-  Widget _toolIcon(Tool tool, IconData icon) {
+  Widget _toolIcon(Tool tool, IconData icon,
+      {Color selectedColor = Colors.teal}) {
     return Consumer<Toolbar>(builder: (context, Toolbar _tool, Widget? child) {
       bool isSelected = _tool.activeTool == tool;
       return IconButton(
+          splashRadius: splashRadius,
           tooltip: tool.name,
           onPressed: () => widget.onToolChange!(tool),
           icon: Icon(
             icon,
-            color: isSelected ? Colors.teal : Colors.grey,
+            color: isSelected ? selectedColor : Colors.grey,
           ));
     });
   }
@@ -30,7 +33,7 @@ class _ToolBarViewState extends State<ToolBarView> {
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
-
+    final _brushProvider = Provider.of<BrushNotifier>(context, listen: true);
     return Container(
       height: 60,
       width: _size.width * 0.5,
@@ -45,45 +48,52 @@ class _ToolBarViewState extends State<ToolBarView> {
               spreadRadius: 4,
             )
           ]),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 5,
-            child: Row(
-              children: [
-                const SizedBox(
-                  width: 50,
-                ),
-                IconButton(
-                  tooltip: 'Undo',
-                  onPressed: () => widget.onToolChange!(Tool.undo),
-                  icon: const Icon(
-                    Icons.undo,
-                    color: Colors.blue,
-                  ),
-                ),
-                IconButton(
-                  tooltip: 'Redo',
-                  onPressed: () => widget.onToolChange!(Tool.redo),
-                  icon: const Icon(Icons.redo, color: Colors.blue),
-                )
-              ],
-            ),
-          ),
-          Expanded(
-              flex: 6,
+      child: Material(
+        borderRadius: BorderRadius.circular(40),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 5,
               child: Row(
                 children: [
-                  _toolIcon(Tool.canvas, Icons.crop),
-                  _toolIcon(Tool.brush, Icons.brush),
-                  _toolIcon(Tool.eraser, Icons.radio_button_checked),
+                  const SizedBox(
+                    width: 50,
+                  ),
+                  IconButton(
+                    splashRadius: splashRadius,
+                    tooltip: 'Undo',
+                    onPressed: () => widget.onToolChange!(Tool.undo),
+                    icon: const Icon(
+                      Icons.undo,
+                    ),
+                  ),
+                  IconButton(
+                    splashRadius: splashRadius,
+                    tooltip: 'Redo',
+                    onPressed: () => widget.onToolChange!(Tool.redo),
+                    icon: const Icon(
+                      Icons.redo,
+                    ),
+                  )
                 ],
-              )),
-          _toolIcon(Tool.eraser, Icons.download),
-          const SizedBox(
-            width: 20,
-          )
-        ],
+              ),
+            ),
+            Expanded(
+                flex: 6,
+                child: Row(
+                  children: [
+                    _toolIcon(Tool.canvas, Icons.crop),
+                    _toolIcon(Tool.brush, Icons.brush,
+                        selectedColor: _brushProvider.color),
+                    _toolIcon(Tool.eraser, Icons.radio_button_checked),
+                  ],
+                )),
+            _toolIcon(Tool.eraser, Icons.download),
+            const SizedBox(
+              width: 20,
+            )
+          ],
+        ),
       ),
     );
   }
