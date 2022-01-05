@@ -310,28 +310,37 @@ class ColorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: add tick animation
-    return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: InkWell(
-          onTap: () => onTap!(color),
-          child: Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: child != null
-                ? child
-                : isSelected
-                    ? Icon(
-                        Icons.check,
-                        color:
-                            color == Colors.white ? Colors.black : Colors.white,
-                      )
-                    : null,
-          ),
-        ));
+    return TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.4, end: 1.0),
+        duration: const Duration(milliseconds: 2000),
+        builder: (context, double value, Widget? child) {
+          return Opacity(
+            opacity: value,
+            child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: InkWell(
+                  onTap: () => onTap!(color),
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: child != null
+                        ? child
+                        : isSelected
+                            ? Icon(
+                                Icons.check,
+                                color: color == Colors.white
+                                    ? Colors.black
+                                    : Colors.white,
+                              )
+                            : null,
+                  ),
+                )),
+          );
+        });
   }
 }
 
