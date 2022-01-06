@@ -40,20 +40,3 @@ class CanvasNotifier extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-class CanvasColor extends ColorExplorer {
-  CanvasColor() {
-    activeColor = Colors.white;
-  }
-
-  @override
-  set activeColor(Color value) {
-    super.activeColor = value;
-  }
-
-  @override
-  void onChange(Color color) {
-    // TODO: implement onChange
-    super.onChange(color);
-  }
-}

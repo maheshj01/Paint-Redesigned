@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class BrushNotifier extends ChangeNotifier {
   List<Color> _recents = [];
@@ -8,6 +9,15 @@ class BrushNotifier extends ChangeNotifier {
   double _size = 4.0;
 
   List<Color> get recents => _recents;
+
+  SystemMouseCursor _brushCursor = SystemMouseCursors.precise;
+
+  SystemMouseCursor get brushCursor=> _brushCursor;
+
+  set brushCursor(SystemMouseCursor cursor){
+    _brushCursor = cursor;
+    notifyListeners();
+  }
 
   Color get color => _color;
 

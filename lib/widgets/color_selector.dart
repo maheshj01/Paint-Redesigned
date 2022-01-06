@@ -34,7 +34,6 @@ class _ColorSelectorState extends State<ColorSelector>
     with SingleTickerProviderStateMixin {
   @override
   void didUpdateWidget(covariant ColorSelector oldWidget) {
-    print('update');
     if (oldWidget.selectedColor != widget.selectedColor ||
         oldWidget.colors != widget.colors ||
         oldWidget.isExpanded != widget.isExpanded) {

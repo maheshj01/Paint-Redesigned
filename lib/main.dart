@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:paint_redesigned/canvas.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +121,7 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                             _canvasController.backgroundColor = canvas.color;
                             _canvasController.strokeWidthh = brush.size;
                             return MouseRegion(
-                              cursor: SystemMouseCursors.precise, 
+                              cursor: brush.brushCursor,
                               child: CanvasWidget(
                                   canvasController: _canvasController),
                             );
@@ -138,6 +139,8 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                   switch (newTool) {
                     case Tool.brush:
                       _toolNotifier.activeTool = Tool.brush;
+                      _canvasController.isEraseMode = false;
+                      _brushNotifier.brushCursor = SystemMouseCursors.precise;
                       break;
                     case Tool.canvas:
                       _toolNotifier.activeTool = Tool.canvas;
@@ -151,7 +154,8 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                       _canvasController.redo();
                       break;
                     case Tool.eraser:
-                      _canvasController.clear();
+                      _canvasController.isEraseMode = true;
+                      _brushNotifier.brushCursor = SystemMouseCursors.grab;
                       break;
                     default:
                   }
