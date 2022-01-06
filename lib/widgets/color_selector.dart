@@ -11,9 +11,7 @@ class ColorSelector extends StatefulWidget {
       this.title = 'Colors',
       this.collapsedColorsLength = visibleColors,
       this.onColorSelected})
-      : assert(colors.contains(selectedColor),
-            'Selected color must be in the list of colors'),
-        super(key: key);
+      : super(key: key);
 
   /// currently selected color
   final Color selectedColor;
