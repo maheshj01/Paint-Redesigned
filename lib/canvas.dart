@@ -169,12 +169,19 @@ class CanvasPainter extends CustomPainter {
 class _PathHistory {
   final List<MapEntry<Path, Paint>> _paths;
   final List<MapEntry<Path, Paint>> _undoHistory;
+  bool _isUndo = false;
   Paint _paint;
   Paint _backgroundPaint;
 
   bool get isEmpty => _paths.isEmpty;
 
+  bool get isUndo => _isUndo;
+
   bool get isUndoEmpty => _undoHistory.isEmpty;
+
+  set isUndo(bool value) {
+    _isUndo = value;
+  }
 
   /// inittialize defaults
   _PathHistory()
@@ -193,7 +200,9 @@ class _PathHistory {
   }
 
   void undo() {
-    _undoHistory.add(_paths.removeLast());
+    final removed = _paths.removeLast();
+    _undoHistory.add(removed);
+    isUndo = true;
   }
   // TODO: _paths: [1,2,3,4,5]
   //TODO: _redo [6,]
@@ -211,6 +220,10 @@ class _PathHistory {
     Path path = Path();
     path.moveTo(startPoint.dx, startPoint.dy);
     _paths.add(MapEntry<Path, Paint>(path, _paint));
+    if (isUndo) {
+      isUndo = false;
+      _undoHistory.clear();
+    }
   }
 
   void updateCurrent(Offset nextPoint) {
