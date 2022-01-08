@@ -465,7 +465,8 @@ class BrushSizer extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              DrawerSubTitle('Brush Size: ${sliderValue.toInt().toString()}'),
+              DrawerSubTitle(
+                  '${isEraser ? 'Eraser' : 'Brush'} Size: ${sliderValue.toInt().toString()}'),
               Container(
                 height: circleSize,
                 width: circleSize,
