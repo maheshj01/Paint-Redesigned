@@ -111,7 +111,10 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                               builder: (context, brush, tool, child) {
                             _canvasController.brushColor = brush.color;
                             _canvasController.backgroundColor = canvas.color;
-                            _canvasController.strokeWidthh = brush.size;
+                            _canvasController.strokeWidthh =
+                                tool.activeTool == Tool.eraser
+                                    ? brush.eraserSize
+                                    : brush.size;
                             return MouseRegion(
                               cursor: tool.cursor,
                               child: CanvasWidget(
