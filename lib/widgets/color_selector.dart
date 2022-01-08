@@ -49,8 +49,13 @@ class _ColorSelectorState extends State<ColorSelector>
     isExpandedNotifier = ValueNotifier<bool>(widget.isExpanded);
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 400));
-    _lengthTween =
-        Tween(begin: widget.collapsedColorsLength, end: widget.colors.length);
+    if (widget.isExpanded) {
+      _lengthTween =
+          Tween(end: widget.collapsedColorsLength, begin: widget.colors.length);
+    } else {
+      _lengthTween =
+          Tween(begin: widget.collapsedColorsLength, end: widget.colors.length);
+    }
     _animation = _lengthTween.animate(
       CurvedAnimation(
         parent: _animationController,

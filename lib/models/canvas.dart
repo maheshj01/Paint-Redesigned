@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/constants/const.dart';
-import 'package:paint_redesigned/models/color.dart';
 
 /// Model class to maintain state of the explorer
 class CanvasNotifier extends ChangeNotifier {

@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:paint_redesigned/canvas.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<CanvasNotifier>(create: (_) => CanvasNotifier()),
         ChangeNotifierProvider<BrushNotifier>(create: (_) => BrushNotifier()),
-        ChangeNotifierProvider<Toolbar>(create: (_) => Toolbar()),
+        ChangeNotifierProvider<ToolController>(create: (_) => ToolController()),
       ],
       child: MaterialApp(
           title: 'Flutter Canvas',
@@ -28,9 +27,6 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
               primarySwatch: Colors.blue,
               visualDensity: VisualDensity.adaptivePlatformDensity,
-              // hoverColor: Colors.red,
-              // highlightColor: Colors.red,
-              // splashColor: Colors.red
               iconTheme: IconThemeData(color: defaultIconColor)),
           home: const PaintHome()),
     );
@@ -81,12 +77,8 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor = Colors.grey[300]!;
-    final _brushNotifier = Provider.of<BrushNotifier>(context, listen: false);
-    final _canvasNotifier = Provider.of<CanvasNotifier>(context, listen: false);
-    final _toolNotifier = Provider.of<Toolbar>(context, listen: false);
+    final _toolNotifier = Provider.of<ToolController>(context, listen: false);
     _canvasController = CanvasController();
-    _canvasController.brushColor = _brushNotifier.color;
-    _canvasController.backgroundColor = _canvasNotifier.color;
     return Material(
       color: backgroundColor,
       child: Stack(
@@ -99,15 +91,15 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                 minScale: 0.01,
                 maxScale: 5.0,
                 child: Consumer<CanvasNotifier>(
-                    builder: (context, CanvasNotifier _tool, Widget? child) {
+                    builder: (context, CanvasNotifier canvas, Widget? child) {
                   return AspectRatio(
-                    aspectRatio: aspectRatios[_tool.aspectRatio]!,
+                    aspectRatio: aspectRatios[canvas.aspectRatio]!,
                     child: Container(
                       color: backgroundColor,
                       padding: const EdgeInsets.all(100),
                       child: Container(
                           decoration:
-                              BoxDecoration(color: _tool.color, boxShadow: [
+                              BoxDecoration(color: canvas.color, boxShadow: [
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.3),
                               blurRadius: 12,
@@ -115,13 +107,13 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                               spreadRadius: 4,
                             )
                           ]),
-                          child: Consumer2<BrushNotifier, CanvasNotifier>(
-                              builder: (context, brush, canvas, child) {
+                          child: Consumer2<BrushNotifier, ToolController>(
+                              builder: (context, brush, tool, child) {
                             _canvasController.brushColor = brush.color;
                             _canvasController.backgroundColor = canvas.color;
                             _canvasController.strokeWidthh = brush.size;
                             return MouseRegion(
-                              cursor: brush.brushCursor,
+                              cursor: tool.cursor,
                               child: CanvasWidget(
                                   canvasController: _canvasController),
                             );
@@ -138,12 +130,12 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                   // TODO: call
                   switch (newTool) {
                     case Tool.brush:
-                      _toolNotifier.activeTool = Tool.brush;
                       _canvasController.isEraseMode = false;
-                      _brushNotifier.brushCursor = SystemMouseCursors.precise;
+                      _toolNotifier.activeTool = newTool;
                       break;
                     case Tool.canvas:
-                      _toolNotifier.activeTool = Tool.canvas;
+                      _toolNotifier.activeTool = newTool;
+                      _canvasController.isEraseMode = false;
                       break;
                     case Tool.download:
                       break;
@@ -155,7 +147,8 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                       break;
                     case Tool.eraser:
                       _canvasController.isEraseMode = true;
-                      _brushNotifier.brushCursor = SystemMouseCursors.grab;
+                      _toolNotifier.activeTool = newTool;
+
                       break;
                     default:
                   }

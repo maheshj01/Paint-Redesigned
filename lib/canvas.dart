@@ -109,12 +109,11 @@ class CanvasController extends ChangeNotifier {
   void _updatePaint() {
     Paint paint = Paint();
     if (_isEraseMode) {
-      paint.color = brushColor;
       paint.blendMode = BlendMode.clear;
     } else {
-      paint.color = brushColor;
       paint.blendMode = BlendMode.srcOver;
     }
+    paint.color = brushColor;
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = strokeWidthh;
 
@@ -124,7 +123,6 @@ class CanvasController extends ChangeNotifier {
 
     _pathHistory._paint = paint;
     _pathHistory._backgroundPaint = backGroundPaint;
-    // _pathHistory.setBackgroundColor(backgroundColor);
     notifyListeners();
   }
 

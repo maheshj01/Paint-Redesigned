@@ -63,8 +63,8 @@ class _ToolExplorerState extends State<ToolExplorer>
     return Container(
         width: explorerWidth,
         color: drawerBackgroundColor,
-        child:
-            Consumer<Toolbar>(builder: (context, Toolbar tool, Widget? child) {
+        child: Consumer<ToolController>(
+            builder: (context, ToolController tool, Widget? child) {
           if (tool.activeTool == Tool.canvas) {
             _tween.begin = -100.0;
           } else {
@@ -406,15 +406,29 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
   late BrushNotifier _brush;
   @override
   Widget build(BuildContext context) {
-    _brush = Provider.of<BrushNotifier>(context);
+    _brush = Provider.of<BrushNotifier>(context, listen: true);
+    final _tool = Provider.of<ToolController>(context, listen: true);
     return Column(
       children: [
-        const BrushSizer(),
+        BrushSizer(
+          sliderMax: _tool.activeTool == Tool.eraser ? 20 : 10,
+          sliderMin: 1.0,
+          isEraser: _tool.activeTool == Tool.eraser ? true : false,
+          sliderValue:
+              _tool.activeTool == Tool.eraser ? _brush.eraserSize : _brush.size,
+          onChange: (value) {
+            if (_tool.activeTool == Tool.eraser) {
+              _brush.eraserSize = value;
+            } else {
+              _brush.size = value;
+            }
+          },
+        ),
         ColorSelector(
           selectedColor: _brush.color,
           title: 'Colors',
           colors: const [Colors.black, ...Colors.accents],
-          isExpanded: true,
+          isExpanded: false,
           onColorSelected: (_color) {
             _brush.color = _color;
           },
@@ -425,12 +439,24 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
 }
 
 class BrushSizer extends StatelessWidget {
-  const BrushSizer({Key? key}) : super(key: key);
-  final double _sliderMin = 1.0;
-  final double _sliderMax = 10.0;
+  const BrushSizer(
+      {Key? key,
+      this.sliderMax = 10.0,
+      this.sliderMin = 1.0,
+      required this.sliderValue,
+      this.isEraser = false,
+      this.onChange})
+      : super(key: key);
+  final double sliderMin;
+  final double sliderMax;
+  final double sliderValue;
+  final bool isEraser;
+  final Function(double)? onChange;
   @override
   Widget build(BuildContext context) {
-    final _brush = Provider.of<BrushNotifier>(context);
+    // final _brush = Provider.of<BrushNotifier>(context);
+    // final size = isEraser ? _brush.eraserSize : _brush.size;
+    final circleSize = sliderValue <= 5 ? sliderValue * 2.5 : sliderValue * 1.5;
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -439,10 +465,10 @@ class BrushSizer extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              DrawerSubTitle('Pointer Size: ${_brush.size.toInt().toString()}'),
+              DrawerSubTitle('Brush Size: ${sliderValue.toInt().toString()}'),
               Container(
-                height: _brush.size * 2.2,
-                width: _brush.size * 2.2,
+                height: circleSize,
+                width: circleSize,
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
@@ -456,13 +482,11 @@ class BrushSizer extends StatelessWidget {
           ),
         ),
         Slider(
-            value: _brush.size,
-            min: _sliderMin,
-            max: _sliderMax,
+            value: sliderValue,
+            min: sliderMin,
+            max: sliderMax,
             label: 'Size',
-            onChanged: (value) {
-              _brush.size = value;
-            }),
+            onChanged: (value) => onChange!(value)),
       ],
     );
   }

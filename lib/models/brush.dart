@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class BrushNotifier extends ChangeNotifier {
   List<Color> _recents = [];
 
   Color _color = Colors.black;
 
+  /// default paint size
   double _size = 4.0;
+  /// default eraser size
+  double _eraserSize = 4.0;
 
   List<Color> get recents => _recents;
-
-  SystemMouseCursor _brushCursor = SystemMouseCursors.precise;
-
-  SystemMouseCursor get brushCursor=> _brushCursor;
-
-  set brushCursor(SystemMouseCursor cursor){
-    _brushCursor = cursor;
-    notifyListeners();
-  }
 
   Color get color => _color;
 
   double get size => _size;
+
+  double get eraserSize => _eraserSize;
 
   set color(Color value) {
     _color = value;
@@ -30,6 +25,11 @@ class BrushNotifier extends ChangeNotifier {
 
   set size(double value) {
     _size = value;
+    notifyListeners();
+  }
+
+  set eraserSize(double value) {
+    _eraserSize = value;
     notifyListeners();
   }
 

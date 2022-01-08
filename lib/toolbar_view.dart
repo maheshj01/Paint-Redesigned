@@ -17,7 +17,8 @@ class ToolBarView extends StatefulWidget {
 class _ToolBarViewState extends State<ToolBarView> {
   Widget _toolIcon(Tool tool, IconData icon,
       {Color selectedColor = Colors.teal}) {
-    return Consumer<Toolbar>(builder: (context, Toolbar _tool, Widget? child) {
+    return Consumer<ToolController>(
+        builder: (context, ToolController _tool, Widget? child) {
       bool isSelected = _tool.activeTool == tool;
       return IconButton(
           splashRadius: splashRadius,
@@ -88,7 +89,7 @@ class _ToolBarViewState extends State<ToolBarView> {
                     _toolIcon(Tool.eraser, Icons.radio_button_checked),
                   ],
                 )),
-            _toolIcon(Tool.eraser, Icons.download),
+            _toolIcon(Tool.download, Icons.download),
             const SizedBox(
               width: 20,
             )
