@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'constants/constants.dart';
 import 'models/models.dart';
@@ -24,7 +25,7 @@ class _ToolBarViewState extends State<ToolBarView> {
           splashRadius: splashRadius,
           tooltip: tool.name,
           onPressed: () => widget.onToolChange!(tool),
-          icon: Icon(
+          icon: FaIcon(
             icon,
             color: isSelected ? selectedColor : Colors.grey,
           ));
@@ -86,7 +87,7 @@ class _ToolBarViewState extends State<ToolBarView> {
                     _toolIcon(Tool.canvas, Icons.crop),
                     _toolIcon(Tool.brush, Icons.brush,
                         selectedColor: _brushProvider.color),
-                    _toolIcon(Tool.eraser, Icons.radio_button_checked),
+                    _toolIcon(Tool.eraser, FontAwesomeIcons.eraser),
                   ],
                 )),
             _toolIcon(Tool.download, Icons.download),
