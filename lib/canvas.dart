@@ -1,4 +1,3 @@
-import 'package:paint_redesigned/cursor.dart';
 import 'package:flutter/material.dart';
 
 class CanvasWidget extends StatefulWidget {
@@ -50,14 +49,11 @@ class _CanvasWidgetState extends State<CanvasWidget> {
         onPanStart: (startDetails) => _onStart(startDetails),
         onPanUpdate: (updateDetails) => _onUpdateDetails(updateDetails),
         onPanEnd: (downDetails) => onEnd(downDetails),
-        child: Cursor(
-          cursorStyle: Cursor.crosshair,
-          child: CustomPaint(
-            willChange: true,
-            painter: CanvasPainter(canvasController._pathHistory,
-                painterModel: canvasController),
-            child: Container(),
-          ),
+        child: CustomPaint(
+          willChange: true,
+          painter: CanvasPainter(canvasController._pathHistory,
+              painterModel: canvasController),
+          child: Container(),
         ));
   }
 
@@ -72,14 +68,18 @@ class CanvasController extends ChangeNotifier {
   Color _backgroundColor = Colors.white;
   double _strokeWidth = 4.0;
   bool _isEraseMode = false;
+  bool _canUndo = false;
+  bool _canRedo = false;
 
   final _PathHistory _pathHistory = _PathHistory();
 
-  bool get isEmpty => _pathHistory.isEmpty;
+  bool get isEmpty => _pathHistory.isPathsEmpty;
 
   Color get brushColor => _color;
 
   bool get isEraseMode => _isEraseMode;
+
+  bool get isUndoEmpty => _pathHistory.isUndoEmpty;
 
   set isEraseMode(bool value) {
     _isEraseMode = value;
@@ -127,13 +127,13 @@ class CanvasController extends ChangeNotifier {
   }
 
   void undo() {
-    if (_pathHistory.isEmpty) return;
+    if (isEmpty) return;
     _pathHistory.undo();
     notifyListeners();
   }
 
   void redo() {
-    if (_pathHistory.isUndoEmpty) return;
+    if (isUndoEmpty) return;
     _pathHistory.redo();
     notifyListeners();
   }
@@ -171,7 +171,7 @@ class _PathHistory {
   Paint _paint;
   Paint _backgroundPaint;
 
-  bool get isEmpty => _paths.isEmpty;
+  bool get isPathsEmpty => _paths.isEmpty;
 
   bool get isUndo => _isUndo;
 
@@ -202,11 +202,8 @@ class _PathHistory {
     _undoHistory.add(removed);
     isUndo = true;
   }
-  // TODO: _paths: [1,2,3,4,5]
-  //TODO: _redo [6,]
 
   void redo() {
-    // TODO: to implement redo
     _paths.add(_undoHistory.removeLast());
   }
 
