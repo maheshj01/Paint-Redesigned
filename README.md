@@ -5,6 +5,10 @@ A Work in Progress WhiteBoard built with flutter.You are welcome to contribute a
 ![ezgif com-video-to-gif (1)](https://user-images.githubusercontent.com/31410839/82818971-36958e80-9ebd-11ea-91e3-f1b556a7901c.gif)
 
 
+#### References: 
+
+- [Flutter Desktop Embedding Example](https://github.com/google/flutter-desktop-embedding/blob/4687840a19f23cff84f1bedeb6d24ac85abd99c8/testbed/lib/main.dart#L114)
+
 
 ## Getting Started
 

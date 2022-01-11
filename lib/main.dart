@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:menubar/menubar.dart';
 import 'package:paint_redesigned/canvas.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +15,19 @@ import 'constants/constants.dart';
 import 'models/models.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  window_size.getWindowInfo().then((window) {
+    window_size.setWindowMinSize(const Size(1200, 600));
+    window_size.setWindowMaxSize(const Size(1600, 1200));
+  });
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  /// Rebuilds the native menu bar based on the current state.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -48,8 +56,65 @@ class PaintHome extends StatefulWidget {
 }
 
 class _PaintHomeState extends State<PaintHome> {
+  // void updateMenubar() {
+  //   // Currently, the menubar plugin is only implemented on macOS and linux.
+  //   if (!Platform.isMacOS && !Platform.isLinux) {
+  //     return;
+  //   }
+  //   setApplicationMenu([
+  //     Submenu(label: 'Edit', children: [
+  //       MenuItem(
+  //           label: 'Undo',
+  //           enabled: true,
+  //           shortcut:
+  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyZ),
+  //           onClicked: () {
+  //             print('reset');
+  //           }),
+  //       MenuItem(
+  //           label: 'Redo',
+  //           enabled: true,
+  //           shortcut:
+  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyY),
+  //           onClicked: () {
+  //             print('reset');
+  //           }),
+  //     ]),
+  //     Submenu(label: 'Tool', children: [
+  //       MenuItem(
+  //           label: 'Canvas',
+  //           enabled: true,
+  //           shortcut:
+  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyC),
+  //           onClicked: () {
+  //             _toolController.activeTool = Tool.canvas;
+  //           }),
+  //       MenuItem(
+  //           label: 'Brush',
+  //           enabled: true,
+  //           shortcut:
+  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyB),
+  //           onClicked: () {
+  //             _toolController.activeTool = Tool.brush;
+  //           }),
+  //       // const MenuDivider(),
+  //       MenuItem(
+  //           label: 'Eraser',
+  //           shortcut:
+  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyE),
+  //           onClicked: () {
+  //             _toolController.activeTool = Tool.eraser;
+  //           }),
+  //     ]),
+  //   ]);
+  // }
+
+  late ToolController _toolController;
+
   @override
   Widget build(BuildContext context) {
+    // _toolController = Provider.of<ToolController>(context, listen: false);
+    // print(_toolController.activeTool);
     return Material(
       color: Colors.transparent,
       child: Stack(
