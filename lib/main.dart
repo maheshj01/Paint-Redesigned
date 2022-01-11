@@ -1,8 +1,14 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:paint_redesigned/canvas.dart';
 import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/toolbar_view.dart';
+import 'package:window_size/window_size.dart' as window_size;
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'constants/constants.dart';
 import 'models/models.dart';
@@ -113,6 +119,16 @@ class EraserIntent extends Intent {
   final String? description;
 }
 
+class DownloadIntent extends Intent {
+  DownloadIntent({this.description, required this.action});
+
+  /// undo the last action
+  Function()? action;
+
+  /// description about the action
+  final String? description;
+}
+
 class CanvasBuilder extends StatefulWidget {
   const CanvasBuilder({Key? key}) : super(key: key);
 
@@ -120,10 +136,30 @@ class CanvasBuilder extends StatefulWidget {
   _CanvasBuilderState createState() => _CanvasBuilderState();
 }
 
+final key = GlobalKey();
+
 class _CanvasBuilderState extends State<CanvasBuilder> {
   late CanvasController _canvasController;
 
   final FocusNode _canvasFocus = FocusNode();
+
+  Future<void> generateImageBytes({double ratio = 1.5}) async {
+    print('generating image');
+    final RenderRepaintBoundary boundary =
+        key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+    final ui.Image image = await boundary.toImage();
+    final ByteData? byteData =
+        await image.toByteData(format: ui.ImageByteFormat.png);
+    final Uint8List pngBytes = byteData!.buffer.asUint8List();
+    await saveFile(pngBytes);
+    print("downloaded image");
+  }
+
+  Future<void> saveFile(Uint8List data) async {
+    final _downloadsDirectory = await getDownloadsDirectory();
+    File file2 = File("${_downloadsDirectory!.path}/paint.png");
+    await file2.writeAsBytes(List.from(data));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +178,7 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
           _canvasController.isEraseMode = false;
           break;
         case Tool.download:
+          generateImageBytes();
           break;
         case Tool.undo:
           _canvasController.undo();
@@ -152,7 +189,6 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
         case Tool.eraser:
           _canvasController.isEraseMode = true;
           _toolNotifier.activeTool = newTool;
-
           break;
         default:
       }
@@ -189,6 +225,11 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
           description: 'switch to canvas mode',
           action: () => onToolChange(Tool.canvas),
         ),
+        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyD):
+            RedoIntent(
+          description: 'switch to download mode',
+          action: () => onToolChange(Tool.download),
+        ),
       },
       child: Actions(
         actions: <Type, Action<Intent>>{
@@ -202,6 +243,8 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
               onInvoke: (EraserIntent intent) => intent.action!()),
           CanvasIntent: CallbackAction<CanvasIntent>(
               onInvoke: (CanvasIntent intent) => intent.action!()),
+          CanvasIntent: CallbackAction<DownloadIntent>(
+              onInvoke: (DownloadIntent intent) => intent.action!()),
         },
         child: Focus(
           autofocus: true,
@@ -251,8 +294,11 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                                           .requestFocus(_canvasFocus);
                                     },
                                     cursor: tool.cursor,
-                                    child: CanvasWidget(
-                                        canvasController: _canvasController),
+                                    child: RepaintBoundary(
+                                      key: key,
+                                      child: CanvasWidget(
+                                          canvasController: _canvasController),
+                                    ),
                                   );
                                 })),
                           ),
