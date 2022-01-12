@@ -3,11 +3,10 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:menubar/menubar.dart';
 import 'package:paint_redesigned/canvas.dart';
-import 'package:paint_redesigned/widgets/tool_explorer.dart';
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/toolbar_view.dart';
+import 'package:paint_redesigned/widgets/widgets.dart';
 import 'package:window_size/window_size.dart' as window_size;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -203,13 +202,13 @@ class CanvasBuilder extends StatefulWidget {
 
 final key = GlobalKey();
 
-class _CanvasBuilderState extends State<CanvasBuilder> {
+class _CanvasBuilderState extends State<CanvasBuilder>
+    with SingleTickerProviderStateMixin {
   late CanvasController _canvasController;
 
   final FocusNode _canvasFocus = FocusNode();
 
   Future<void> generateImageBytes({double ratio = 1.5}) async {
-    print('generating image');
     final RenderRepaintBoundary boundary =
         key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final ui.Image image = await boundary.toImage();
@@ -217,13 +216,28 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
         await image.toByteData(format: ui.ImageByteFormat.png);
     final Uint8List pngBytes = byteData!.buffer.asUint8List();
     await saveFile(pngBytes);
-    print("downloaded image");
   }
 
   Future<void> saveFile(Uint8List data) async {
-    final _downloadsDirectory = await getDownloadsDirectory();
-    File file2 = File("${_downloadsDirectory!.path}/paint.png");
-    await file2.writeAsBytes(List.from(data));
+    try {
+      final now = DateTime.now().microsecondsSinceEpoch;
+      final _downloadsDirectory = await getDownloadsDirectory();
+      File file2 = File("${_downloadsDirectory!.path}/$now.png");
+      await file2.writeAsBytes(List.from(data));
+      _messengerController.start();
+    } catch (_) {}
+  }
+
+  late MessengerController _messengerController;
+
+  @override
+  void initState() {
+    super.initState();
+    _messengerController = MessengerController(AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    ));
+    _messengerController.curve = Curves.easeInOut;
   }
 
   @override
@@ -231,7 +245,6 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
     final Color backgroundColor = Colors.grey[300]!;
     final _toolNotifier = Provider.of<ToolController>(context, listen: false);
     _canvasController = CanvasController();
-
     void onToolChange(Tool newTool) {
       switch (newTool) {
         case Tool.brush:
@@ -375,6 +388,13 @@ class _CanvasBuilderState extends State<CanvasBuilder> {
                     alignment: Alignment.topCenter,
                     child: ToolBarView(
                         onToolChange: (Tool newTool) => onToolChange(newTool))),
+                Positioned(
+                    child: Messenger(
+                      message: 'File Saved to Downloads',
+                      messengerController: _messengerController,
+                    ),
+                    top: 20,
+                    left: 0),
               ],
             ),
           ),
