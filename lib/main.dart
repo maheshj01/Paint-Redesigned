@@ -16,8 +16,7 @@ import 'models/models.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   window_size.getWindowInfo().then((window) {
-    window_size.setWindowMinSize(const Size(1200, 600));
-    window_size.setWindowMaxSize(const Size(1600, 1200));
+    window_size.setWindowMinSize(const Size(1200, 800));
   });
 
   runApp(const MyApp());
@@ -114,8 +113,6 @@ class _PaintHomeState extends State<PaintHome> {
 
   @override
   Widget build(BuildContext context) {
-    // _toolController = Provider.of<ToolController>(context, listen: false);
-    // print(_toolController.activeTool);
     return Material(
       color: Colors.transparent,
       child: Stack(
