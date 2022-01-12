@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<CanvasNotifier>(create: (_) => CanvasNotifier()),
         ChangeNotifierProvider<BrushNotifier>(create: (_) => BrushNotifier()),
         ChangeNotifierProvider<ToolController>(create: (_) => ToolController()),
+        ChangeNotifierProvider<MessengerController>(
+            create: (_) => MessengerController()),
       ],
       child: MaterialApp(
           title: 'Flutter Canvas',
@@ -209,6 +211,8 @@ class _CanvasBuilderState extends State<CanvasBuilder>
   final FocusNode _canvasFocus = FocusNode();
 
   Future<void> generateImageBytes({double ratio = 1.5}) async {
+    if (_canvasController.isEmpty) return;
+
     final RenderRepaintBoundary boundary =
         key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final ui.Image image = await boundary.toImage();
@@ -224,8 +228,11 @@ class _CanvasBuilderState extends State<CanvasBuilder>
       final _downloadsDirectory = await getDownloadsDirectory();
       File file2 = File("${_downloadsDirectory!.path}/$now.png");
       await file2.writeAsBytes(List.from(data));
-      _messengerController.start();
-    } catch (_) {}
+      _messengerController.message = 'hello';
+      _messengerController.show('File changed');
+    } catch (_) {
+      _messengerController.show('Failed to save the file');
+    }
   }
 
   late MessengerController _messengerController;
@@ -233,7 +240,8 @@ class _CanvasBuilderState extends State<CanvasBuilder>
   @override
   void initState() {
     super.initState();
-    _messengerController = MessengerController(AnimationController(
+    _messengerController = MessengerController(
+        controller: AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     ));
@@ -390,7 +398,6 @@ class _CanvasBuilderState extends State<CanvasBuilder>
                         onToolChange: (Tool newTool) => onToolChange(newTool))),
                 Positioned(
                     child: Messenger(
-                      message: 'File Saved to Downloads',
                       messengerController: _messengerController,
                     ),
                     top: 20,

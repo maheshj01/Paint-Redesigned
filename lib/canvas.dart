@@ -68,8 +68,6 @@ class CanvasController extends ChangeNotifier {
   Color _backgroundColor = Colors.white;
   double _strokeWidth = 4.0;
   bool _isEraseMode = false;
-  bool _canUndo = false;
-  bool _canRedo = false;
 
   final _PathHistory _pathHistory = _PathHistory();
 

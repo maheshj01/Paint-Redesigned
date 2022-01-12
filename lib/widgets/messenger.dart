@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:paint_redesigned/models/models.dart';
+import 'package:provider/provider.dart';
 
-class MessengerController {
-  MessengerController(this._controller);
+class MessengerController with ChangeNotifier {
+  MessengerController({this.controller});
+
+  String? _message;
+
   Curve _curve = Curves.bounceIn;
 
   /// duration for long the message is shown
+
+  String get message => _message ?? 'File saved';
+
+  set message(String? value) {
+    _message = value;
+    notifyListeners();
+  }
 
   Duration _duration = Duration(seconds: 2);
 
@@ -21,32 +32,33 @@ class MessengerController {
 
   Curve get curve => _curve;
 
-  final AnimationController _controller;
+  final AnimationController? controller;
 
-  AnimationController get controller => _controller;
-
-  void start() {
-    _controller.forward();
+  void show(String status) {
+    message = status;
+    controller!.forward();
+    notifyListeners();
   }
 
   void stop() {
-    _controller.stop();
+    controller!.stop();
+    notifyListeners();
   }
 
   void reverse() {
-    _controller.reverse();
+    controller!.reverse();
+    notifyListeners();
   }
 }
 
 class Messenger extends StatefulWidget {
-  const Messenger(
-      {Key? key, this.child, this.messengerController, this.message})
-      : assert(child != null || message != null,
-            'Either message or child must be provided'),
-        super(key: key);
+  const Messenger({
+    Key? key,
+    this.child,
+    this.messengerController,
+  }) : super(key: key);
   final MessengerController? messengerController;
   final Widget? child;
-  final String? message;
 
   @override
   MessengerState createState() => MessengerState();
@@ -64,10 +76,12 @@ class MessengerState extends State<Messenger>
       );
       _duration = const Duration(seconds: 2);
       curve = Curves.easeInOut;
+      message = 'File saved to Downloads';
     } else {
-      _controller = widget.messengerController!.controller;
+      _controller = widget.messengerController!.controller!;
       _duration = widget.messengerController!.duration;
       curve = widget.messengerController!.curve;
+      message = widget.messengerController!.message;
     }
 
     _tween = Tween<double>(begin: -250, end: 20.0);
@@ -95,21 +109,24 @@ class MessengerState extends State<Messenger>
   late Animation _animation;
   late Curve curve;
   double width = 220;
+  late String message;
   @override
   Widget build(BuildContext context) {
-    final _messageWidget = Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Container(
-        width: width,
-        height: 80,
-        // decoration: BoxDecoration(
-        //     color: Colors.transparent, borderRadius: BorderRadius.circular(10)),
-        alignment: Alignment.center,
-        child: Text(widget.message ?? ''),
-      ),
-    );
+    final _messageWidget = Consumer<MessengerController>(
+        builder: (context, MessengerController messenger, Widget? child) {
+      print('message received ${messenger.message}');
+      return Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Container(
+          width: width,
+          height: 80,
+          alignment: Alignment.center,
+          child: Text(messenger.message),
+        ),
+      );
+    });
     return AnimatedBuilder(
         animation: _animation,
         builder: (BuildContext context, Widget? child) {
