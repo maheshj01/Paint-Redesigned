@@ -326,8 +326,6 @@ class _CanvasBuilderState extends State<CanvasBuilder>
               onInvoke: (EraserIntent intent) => intent.action!()),
           CanvasIntent: CallbackAction<CanvasIntent>(
               onInvoke: (CanvasIntent intent) => intent.action!()),
-          CanvasIntent: CallbackAction<DownloadIntent>(
-              onInvoke: (DownloadIntent intent) => intent.action!()),
         },
         child: Focus(
           autofocus: true,
