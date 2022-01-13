@@ -280,39 +280,36 @@ class _CanvasBuilderState extends State<CanvasBuilder>
       }
     }
 
+    final platformKey =
+        Platform.isMacOS ? LogicalKeyboardKey.meta : LogicalKeyboardKey.control;
+
     return Shortcuts(
       shortcuts: <LogicalKeySet, Intent>{
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyZ):
-            UndoIntent(
+        LogicalKeySet(platformKey, LogicalKeyboardKey.keyZ): UndoIntent(
           description: 'undo last action',
           action: () {
             _canvasController.undo();
           },
         ),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyY):
-            RedoIntent(
+        LogicalKeySet(platformKey, LogicalKeyboardKey.keyY): RedoIntent(
           description: 'redo last action',
           action: () {
             _canvasController.redo();
           },
         ),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyB):
-            RedoIntent(
+        LogicalKeySet(platformKey, LogicalKeyboardKey.keyB): RedoIntent(
           description: 'switch to brush mode',
           action: () => onToolChange(Tool.brush),
         ),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyE):
-            RedoIntent(
+        LogicalKeySet(platformKey, LogicalKeyboardKey.keyE): RedoIntent(
           description: 'switch to eraser mode',
           action: () => onToolChange(Tool.eraser),
         ),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyC):
-            RedoIntent(
+        LogicalKeySet(platformKey, LogicalKeyboardKey.keyC): RedoIntent(
           description: 'switch to canvas mode',
           action: () => onToolChange(Tool.canvas),
         ),
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyD):
-            RedoIntent(
+        LogicalKeySet(platformKey, LogicalKeyboardKey.keyD): RedoIntent(
           description: 'switch to download mode',
           action: () => onToolChange(Tool.download),
         ),
