@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:paint_redesigned/models/models.dart';
-import 'package:provider/provider.dart';
 
 class MessengerController with ChangeNotifier {
   MessengerController({this.controller});
 
-  String? _message;
+  // TODO: Update message dynamically from outside
+
+  String? _message = 'File saved to downloads';
 
   Curve _curve = Curves.bounceIn;
 
+  bool _isAnimating = false;
+
+  bool get isAnimating => _isAnimating;
+
+  set isAnimating(bool value) {
+    _isAnimating = value;
+    notifyListeners();
+  }
+
   /// duration for long the message is shown
 
-  String get message => _message ?? 'File saved';
+  String get message => _message ?? 'null';
 
   set message(String? value) {
     _message = value;
     notifyListeners();
   }
 
-  Duration _duration = Duration(seconds: 2);
+  Duration _duration = const Duration(seconds: 2);
 
   set duration(Duration duration) {
     _duration = duration;
@@ -28,6 +37,7 @@ class MessengerController with ChangeNotifier {
 
   set curve(Curve value) {
     _curve = value;
+    notifyListeners();
   }
 
   Curve get curve => _curve;
@@ -35,7 +45,7 @@ class MessengerController with ChangeNotifier {
   final AnimationController? controller;
 
   void show(String status) {
-    message = status;
+    _message = status;
     controller!.forward();
     notifyListeners();
   }
@@ -100,6 +110,9 @@ class MessengerState extends State<Messenger>
         });
       }
     });
+    if (widget.messengerController != null) {
+      widget.messengerController!.isAnimating = _controller.isAnimating;
+    }
   }
 
   late Duration _duration;
@@ -112,10 +125,7 @@ class MessengerState extends State<Messenger>
   late String message;
   @override
   Widget build(BuildContext context) {
-    final _messageWidget = Consumer<MessengerController>(
-        builder: (context, MessengerController messenger, Widget? child) {
-      print('message received ${messenger.message}');
-      return Card(
+    final _messageWidget = Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
@@ -123,10 +133,9 @@ class MessengerState extends State<Messenger>
           width: width,
           height: 80,
           alignment: Alignment.center,
-          child: Text(messenger.message),
-        ),
-      );
-    });
+          child: Text(message),
+        ));
+
     return AnimatedBuilder(
         animation: _animation,
         builder: (BuildContext context, Widget? child) {

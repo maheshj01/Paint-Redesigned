@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<CanvasNotifier>(create: (_) => CanvasNotifier()),
         ChangeNotifierProvider<BrushNotifier>(create: (_) => BrushNotifier()),
         ChangeNotifierProvider<ToolController>(create: (_) => ToolController()),
-        ChangeNotifierProvider<MessengerController>(
-            create: (_) => MessengerController()),
+        // ChangeNotifierProvider<MessengerController>(
+        //     create: (_) => MessengerController()),
       ],
       child: MaterialApp(
           title: 'Flutter Canvas',
@@ -56,61 +56,6 @@ class PaintHome extends StatefulWidget {
 }
 
 class _PaintHomeState extends State<PaintHome> {
-  // void updateMenubar() {
-  //   // Currently, the menubar plugin is only implemented on macOS and linux.
-  //   if (!Platform.isMacOS && !Platform.isLinux) {
-  //     return;
-  //   }
-  //   setApplicationMenu([
-  //     Submenu(label: 'Edit', children: [
-  //       MenuItem(
-  //           label: 'Undo',
-  //           enabled: true,
-  //           shortcut:
-  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyZ),
-  //           onClicked: () {
-  //             print('reset');
-  //           }),
-  //       MenuItem(
-  //           label: 'Redo',
-  //           enabled: true,
-  //           shortcut:
-  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyY),
-  //           onClicked: () {
-  //             print('reset');
-  //           }),
-  //     ]),
-  //     Submenu(label: 'Tool', children: [
-  //       MenuItem(
-  //           label: 'Canvas',
-  //           enabled: true,
-  //           shortcut:
-  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyC),
-  //           onClicked: () {
-  //             _toolController.activeTool = Tool.canvas;
-  //           }),
-  //       MenuItem(
-  //           label: 'Brush',
-  //           enabled: true,
-  //           shortcut:
-  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyB),
-  //           onClicked: () {
-  //             _toolController.activeTool = Tool.brush;
-  //           }),
-  //       // const MenuDivider(),
-  //       MenuItem(
-  //           label: 'Eraser',
-  //           shortcut:
-  //               LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyE),
-  //           onClicked: () {
-  //             _toolController.activeTool = Tool.eraser;
-  //           }),
-  //     ]),
-  //   ]);
-  // }
-
-  late ToolController _toolController;
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -225,7 +170,6 @@ class _CanvasBuilderState extends State<CanvasBuilder>
       final _downloadsDirectory = await getDownloadsDirectory();
       File file2 = File("${_downloadsDirectory!.path}/$now.png");
       await file2.writeAsBytes(List.from(data));
-      _messengerController.message = 'hello';
       _messengerController.show('File changed');
     } catch (_) {
       _messengerController.show('Failed to save the file');
