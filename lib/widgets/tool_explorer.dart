@@ -408,6 +408,7 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
   Widget build(BuildContext context) {
     _brush = Provider.of<BrushNotifier>(context, listen: true);
     final _tool = Provider.of<ToolController>(context, listen: true);
+
     return Column(
       children: [
         BrushSizer(
@@ -456,7 +457,8 @@ class BrushSizer extends StatelessWidget {
   Widget build(BuildContext context) {
     // final _brush = Provider.of<BrushNotifier>(context);
     // final size = isEraser ? _brush.eraserSize : _brush.size;
-    final circleSize = sliderValue <= 5 ? sliderValue * 2.5 : sliderValue * 1.5;
+    final circleSize = sliderValue.clamp(4.0, 20.0);
+    //  <= 5 ? sliderValue * 2.5 : sliderValue * 1.5;
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -482,7 +484,7 @@ class BrushSizer extends StatelessWidget {
             ],
           ),
         ),
-        Slider(
+        Slider.adaptive(
             value: sliderValue,
             min: sliderMin,
             max: sliderMax,

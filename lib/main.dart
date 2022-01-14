@@ -154,7 +154,6 @@ class _CanvasBuilderState extends State<CanvasBuilder>
 
   Future<void> generateImageBytes({double ratio = 1.5}) async {
     if (_canvasController.isEmpty) return;
-
     final RenderRepaintBoundary boundary =
         key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final ui.Image image = await boundary.toImage();
@@ -162,6 +161,7 @@ class _CanvasBuilderState extends State<CanvasBuilder>
         await image.toByteData(format: ui.ImageByteFormat.png);
     final Uint8List pngBytes = byteData!.buffer.asUint8List();
     await saveFile(pngBytes);
+    // imageNotifier.value = false;
   }
 
   Future<void> saveFile(Uint8List data) async {
@@ -189,6 +189,7 @@ class _CanvasBuilderState extends State<CanvasBuilder>
     _messengerController.curve = Curves.easeInOut;
   }
 
+  final imageNotifier = ValueNotifier<bool>(false);
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor = Colors.grey[300]!;
@@ -205,7 +206,10 @@ class _CanvasBuilderState extends State<CanvasBuilder>
           _canvasController.isEraseMode = false;
           break;
         case Tool.download:
-          generateImageBytes();
+          // imageNotifier.value = true;
+          WidgetsBinding.instance!.addPostFrameCallback((z) {
+            generateImageBytes();
+          });
           break;
         case Tool.undo:
           _canvasController.undo();
@@ -311,17 +315,23 @@ class _CanvasBuilderState extends State<CanvasBuilder>
                                           ? brush.eraserSize
                                           : brush.size;
                                   return MouseRegion(
-                                    onEnter: (z) {
-                                      FocusScope.of(context)
-                                          .requestFocus(_canvasFocus);
-                                    },
-                                    cursor: tool.cursor,
-                                    child: RepaintBoundary(
-                                      key: key,
-                                      child: CanvasWidget(
-                                          canvasController: _canvasController),
-                                    ),
-                                  );
+                                      onEnter: (z) {
+                                        FocusScope.of(context)
+                                            .requestFocus(_canvasFocus);
+                                      },
+                                      cursor: tool.cursor,
+                                      child: ValueListenableBuilder(
+                                        valueListenable: imageNotifier,
+                                        builder: (context, bool takingPicture,
+                                            Widget? child) {
+                                          return RepaintBoundary(
+                                            key: key,
+                                            child: CanvasWidget(
+                                                canvasController:
+                                                    _canvasController),
+                                          );
+                                        },
+                                      ));
                                 })),
                           ),
                         );

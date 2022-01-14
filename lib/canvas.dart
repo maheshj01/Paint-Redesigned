@@ -73,6 +73,8 @@ class CanvasController extends ChangeNotifier {
 
   bool get isEmpty => _pathHistory.isPathsEmpty;
 
+  List<MapEntry<Path, Paint>>  get paths => _pathHistory.paths;
+
   Color get brushColor => _color;
 
   bool get isEraseMode => _isEraseMode;
@@ -178,6 +180,8 @@ class _PathHistory {
   set isUndo(bool value) {
     _isUndo = value;
   }
+
+  List<MapEntry<Path, Paint>>  get paths => _paths;
 
   /// inittialize defaults
   _PathHistory()
