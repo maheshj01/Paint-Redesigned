@@ -253,7 +253,7 @@ class _CanvasBuilderState extends State<CanvasBuilder>
           description: 'switch to canvas mode',
           action: () => onToolChange(Tool.canvas),
         ),
-        LogicalKeySet(platformKey, LogicalKeyboardKey.keyD): RedoIntent(
+        LogicalKeySet(platformKey, LogicalKeyboardKey.keyS): RedoIntent(
           description: 'switch to download mode',
           action: () => onToolChange(Tool.download),
         ),

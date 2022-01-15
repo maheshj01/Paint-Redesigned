@@ -81,20 +81,22 @@ class _ToolBarViewState extends State<ToolBarView> {
                 flex: 6,
                 child: Row(
                   children: [
-                    _toolIcon(
-                      Tool.canvas,
-                      Icons.crop,
-                      tooltip: 'Canvas ($platformKey+C)',
-                    ),
                     _toolIcon(Tool.brush, Icons.brush,
                         selectedColor: _brushProvider.color,
                         tooltip: 'Brush ($platformKey+B)'),
+                    _toolIcon(
+                      Tool.canvas,
+                      Icons.crop,
+                      selectedColor: _brushProvider.color,
+                      tooltip: 'Canvas ($platformKey+C)',
+                    ),
                     _toolIcon(Tool.eraser, FontAwesomeIcons.eraser,
+                        selectedColor: _brushProvider.color,
                         tooltip: 'Eraser ($platformKey+E)'),
                   ],
                 )),
             _toolIcon(Tool.download, Icons.download,
-                tooltip: 'Download ($platformKey+D)'),
+                tooltip: 'Download ($platformKey+S)'),
             const SizedBox(
               width: 20,
             )
