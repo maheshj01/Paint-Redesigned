@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -17,13 +19,13 @@ class ToolBarView extends StatefulWidget {
 
 class _ToolBarViewState extends State<ToolBarView> {
   Widget _toolIcon(Tool tool, IconData icon,
-      {Color selectedColor = Colors.teal}) {
+      {Color selectedColor = Colors.teal, String? tooltip}) {
     return Consumer<ToolController>(
         builder: (context, ToolController _tool, Widget? child) {
       bool isSelected = _tool.activeTool == tool;
       return IconButton(
           splashRadius: splashRadius,
-          tooltip: tool.name,
+          tooltip: tooltip ?? tool.name,
           onPressed: () => widget.onToolChange!(tool),
           icon: FaIcon(
             icon,
@@ -36,6 +38,7 @@ class _ToolBarViewState extends State<ToolBarView> {
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
     final _brushProvider = Provider.of<BrushNotifier>(context, listen: true);
+    final platformKey = Platform.isMacOS ? 'CMD' : 'CTRL';
     return Container(
       height: 60,
       width: _size.width * 0.5,
@@ -61,22 +64,16 @@ class _ToolBarViewState extends State<ToolBarView> {
                   const SizedBox(
                     width: 50,
                   ),
-                  IconButton(
-                    splashRadius: splashRadius,
-                    tooltip: 'Undo',
-                    onPressed: () => widget.onToolChange!(Tool.undo),
-                    icon: const Icon(
-                      Icons.undo,
-                    ),
+                  _toolIcon(
+                    Tool.undo,
+                    Icons.undo,
+                    tooltip: 'Undo ($platformKey+Z)',
                   ),
-                  IconButton(
-                    splashRadius: splashRadius,
-                    tooltip: 'Redo',
-                    onPressed: () => widget.onToolChange!(Tool.redo),
-                    icon: const Icon(
-                      Icons.redo,
-                    ),
-                  )
+                  _toolIcon(
+                    Tool.redo,
+                    Icons.redo,
+                    tooltip: 'Redo ($platformKey+Y)',
+                  ),
                 ],
               ),
             ),
@@ -84,13 +81,20 @@ class _ToolBarViewState extends State<ToolBarView> {
                 flex: 6,
                 child: Row(
                   children: [
-                    _toolIcon(Tool.canvas, Icons.crop),
+                    _toolIcon(
+                      Tool.canvas,
+                      Icons.crop,
+                      tooltip: 'Canvas ($platformKey+C)',
+                    ),
                     _toolIcon(Tool.brush, Icons.brush,
-                        selectedColor: _brushProvider.color),
-                    _toolIcon(Tool.eraser, FontAwesomeIcons.eraser),
+                        selectedColor: _brushProvider.color,
+                        tooltip: 'Brush ($platformKey+B)'),
+                    _toolIcon(Tool.eraser, FontAwesomeIcons.eraser,
+                        tooltip: 'Eraser ($platformKey+E)'),
                   ],
                 )),
-            _toolIcon(Tool.download, Icons.download),
+            _toolIcon(Tool.download, Icons.download,
+                tooltip: 'Download ($platformKey+D)'),
             const SizedBox(
               width: 20,
             )

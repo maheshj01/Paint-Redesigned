@@ -206,10 +206,8 @@ class _CanvasBuilderState extends State<CanvasBuilder>
           _canvasController.isEraseMode = false;
           break;
         case Tool.download:
-          // imageNotifier.value = true;
-          WidgetsBinding.instance!.addPostFrameCallback((z) {
-            generateImageBytes();
-          });
+          generateImageBytes();
+          WidgetsBinding.instance!.addPostFrameCallback((z) {});
           break;
         case Tool.undo:
           _canvasController.undo();
@@ -225,6 +223,7 @@ class _CanvasBuilderState extends State<CanvasBuilder>
       }
     }
 
+    /// command on mac and ctrl on linux, windonws
     final platformKey =
         Platform.isMacOS ? LogicalKeyboardKey.meta : LogicalKeyboardKey.control;
 
