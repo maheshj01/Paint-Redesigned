@@ -110,7 +110,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
     super.initState();
     _colorController = TextEditingController();
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      _colorController.text = _toolbarProvider.color.toHex();
+      _colorController.text = _canvasNotifier.color.toHex();
     });
   }
 
@@ -122,7 +122,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
 
   final isExpandedNotifier = ValueNotifier(false);
 
-  late CanvasNotifier _toolbarProvider;
+  late CanvasNotifier _canvasNotifier;
   Color selectedColor = Colors.white;
   @override
   Widget build(BuildContext context) {
@@ -130,7 +130,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
     final _values = aspectRatios.values;
     final _keys = aspectRatios.keys;
 
-    _toolbarProvider = Provider.of<CanvasNotifier>(context, listen: true);
+    _canvasNotifier = Provider.of<CanvasNotifier>(context, listen: true);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -166,7 +166,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
                 Row(
                   children: [
                     ColorCard(
-                        color: _toolbarProvider.color,
+                        color: _canvasNotifier.color,
                         size: 35,
                         isSelected: false),
                     ColorField(
@@ -175,7 +175,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
                       onChange: (newColor) {
                         try {
                           if (newColor.isNotEmpty) {
-                            _toolbarProvider.color = newColor.hexToColor();
+                            _canvasNotifier.color = newColor.hexToColor();
                           }
                         } catch (e) {
                           print(e);
@@ -224,13 +224,13 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
             );
           }),
           ColorSelector(
-            selectedColor: _toolbarProvider.color,
+            selectedColor: _canvasNotifier.color,
             title: 'Background',
             colors: canvasBackgroundColors,
             isExpanded: false,
             onColorSelected: (_color) {
               _colorController.text = _color.toHex();
-              _toolbarProvider.color = _color;
+              _canvasNotifier.color = _color;
             },
           )
         ],
