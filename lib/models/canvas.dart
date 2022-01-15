@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:paint_redesigned/constants/const.dart';
 
 /// Model class to maintain state of the explorer
+enum CanvasBackground {dots, vlines, hlines, grid, none}
 class CanvasNotifier extends ChangeNotifier {
   List<Color> _recents = [];
 
@@ -10,6 +11,15 @@ class CanvasNotifier extends ChangeNotifier {
   Color _color = Colors.white;
 
   String get aspectRatio => _aspectRatio;
+
+  CanvasBackground _background = CanvasBackground.none;
+
+  CanvasBackground get background => _background;
+
+  set background(CanvasBackground value) {
+    _background = value;
+    notifyListeners();
+  }
 
   set aspectRatio(String value) {
     _aspectRatio = value;

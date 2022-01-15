@@ -313,12 +313,17 @@ class _CanvasBuilderState extends State<CanvasBuilder>
                                       tool.activeTool == Tool.eraser
                                           ? brush.eraserSize
                                           : brush.size;
+                                  _canvasController.background =
+                                      canvas.background;
                                   return MouseRegion(
                                       onEnter: (z) {
                                         FocusScope.of(context)
                                             .requestFocus(_canvasFocus);
                                       },
                                       cursor: tool.cursor,
+
+                                      /// Todo: ValueNotifier not in use right now
+                                      /// to be used for image manipualation
                                       child: ValueListenableBuilder(
                                         valueListenable: imageNotifier,
                                         builder: (context, bool takingPicture,

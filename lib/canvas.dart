@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paint_redesigned/models/models.dart';
 
 class CanvasWidget extends StatefulWidget {
   final CanvasController? canvasController;
@@ -73,13 +74,23 @@ class CanvasController extends ChangeNotifier {
 
   bool get isEmpty => _pathHistory.isPathsEmpty;
 
-  List<MapEntry<Path, Paint>>  get paths => _pathHistory.paths;
+  List<MapEntry<Path, Paint>> get paths => _pathHistory.paths;
 
   Color get brushColor => _color;
 
   bool get isEraseMode => _isEraseMode;
 
   bool get isUndoEmpty => _pathHistory.isUndoEmpty;
+
+  CanvasBackground _background = CanvasBackground.none;
+
+  CanvasBackground get background => _background;
+
+  set background(CanvasBackground value) {
+    _background = value;
+    _updatePaint();
+    notifyListeners();
+  }
 
   set isEraseMode(bool value) {
     _isEraseMode = value;
@@ -123,6 +134,7 @@ class CanvasController extends ChangeNotifier {
 
     _pathHistory._paint = paint;
     _pathHistory._backgroundPaint = backGroundPaint;
+    _pathHistory.background = background;
     notifyListeners();
   }
 
@@ -171,6 +183,14 @@ class _PathHistory {
   Paint _paint;
   Paint _backgroundPaint;
 
+  CanvasBackground _background = CanvasBackground.none;
+
+  CanvasBackground get background => _background;
+
+  set background(CanvasBackground value) {
+    _background = value;
+  }
+
   bool get isPathsEmpty => _paths.isEmpty;
 
   bool get isUndo => _isUndo;
@@ -181,9 +201,8 @@ class _PathHistory {
     _isUndo = value;
   }
 
-  List<MapEntry<Path, Paint>>  get paths => _paths;
+  List<MapEntry<Path, Paint>> get paths => _paths;
 
-  /// inittialize defaults
   _PathHistory()
       : _paths = <MapEntry<Path, Paint>>[],
         _undoHistory = <MapEntry<Path, Paint>>[],
@@ -236,6 +255,86 @@ class _PathHistory {
     }
     canvas.drawRect(
         Rect.fromLTWH(0.0, 0.0, size.width, size.height), _backgroundPaint);
+    if (_background == CanvasBackground.grid) {
+      drawGrid(canvas, size);
+    } else if (background == CanvasBackground.dots) {
+      drawDots(canvas, size);
+    } else if (background == CanvasBackground.hlines) {
+      drawHLines(canvas, size);
+    } else if (background == CanvasBackground.vlines) {
+      drawVlines(canvas, size);
+    } else {
+      drawNone(canvas, size);
+    }
     canvas.restore();
+  }
+
+  void drawNone(Canvas canvas, Size size) {
+    // do nothing
+  }
+
+  void drawGrid(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+    final width = size.width;
+    final height = size.height;
+    final count = 20;
+    final step = size.width / count;
+    for (int i = 0; i <= count; i++) {
+      final x = step * i;
+      canvas.drawLine(Offset(x, 0.0), Offset(x, height), paint);
+    }
+    for (int i = 0; i <= count; i++) {
+      final y = step * i;
+      canvas.drawLine(Offset(0.0, y), Offset(width, y), paint);
+    }
+  }
+
+  void drawDots(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.fill;
+    const countX = 20;
+    const countY = 20;
+    final step = size.width / countX;
+    for (int i = 0; i <= countX; i++) {
+      final x = step * i;
+      for (int j = 0; j <= countY; j++) {
+        final y = step * j;
+        canvas.drawCircle(Offset(x, y), 2.0, paint);
+      }
+    }
+  }
+
+  void drawHLines(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.fill;
+    final width = size.width;
+    const count = 20;
+    final step = size.width / count;
+    for (int i = 0; i <= count; i++) {
+      final y = step * i;
+      canvas.drawLine(Offset(0.0, y), Offset(width, y), paint);
+    }
+  }
+
+  void drawVlines(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.fill;
+    final width = size.width;
+    final height = size.height;
+    final count = 20;
+    final step = size.width / count;
+    for (int i = 0; i <= count; i++) {
+      final x = step * i;
+      canvas.drawLine(Offset(x, 0.0), Offset(x, height), paint);
+    }
   }
 }
