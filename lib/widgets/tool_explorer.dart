@@ -427,70 +427,114 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
 
   @override
   Widget build(BuildContext context) {
-    _brush = Provider.of<BrushNotifier>(context, listen: true);
     final _tool = Provider.of<ToolController>(context, listen: true);
+    _brush = Provider.of<BrushNotifier>(context, listen: false);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        BrushSizer(
-          sliderMax: 20,
-          sliderMin: 1.0,
-          isEraser: _tool.activeTool == Tool.eraser ? true : false,
-          sliderValue:
-              _tool.activeTool == Tool.eraser ? _brush.eraserSize : _brush.size,
-          onChange: (value) {
-            if (_tool.activeTool == Tool.eraser) {
-              _brush.eraserSize = value;
-            } else {
-              _brush.size = value;
-            }
-          },
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            right: maxPadding,
-            top: maxPadding,
+    return Consumer<BrushNotifier>(
+        builder: (context, BrushNotifier _brushNotifier, Widget? child) {
+      final length = _brushNotifier.recents.length > noOfRecentColors
+          ? noOfRecentColors
+          : _brushNotifier.recents.length;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          BrushSizer(
+            sliderMax: 20,
+            sliderMin: 1.0,
+            isEraser: _tool.activeTool == Tool.eraser ? true : false,
+            sliderValue: _tool.activeTool == Tool.eraser
+                ? _brushNotifier.eraserSize
+                : _brushNotifier.size,
+            onChange: (value) {
+              if (_tool.activeTool == Tool.eraser) {
+                _brushNotifier.eraserSize = value;
+              } else {
+                _brushNotifier.size = value;
+              }
+            },
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const DrawerSubTitle("Active Color"),
-              Row(
-                children: [
-                  ColorCard(color: _brush.color, size: 35, isSelected: false),
-                  ColorField(
-                    controller: _colorController,
-                    onTap: () {},
-                    onChange: (newColor) {
-                      try {
-                        if (newColor.isNotEmpty) {
-                          _brush.color = newColor.hexToColor();
-                        }
-                      } catch (e) {
-                        print(e);
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        _tool.activeTool == Tool.brush
-            ? ColorSelector(
-                selectedColor: _brush.color,
-                title: 'Colors',
-                colors: const [Colors.black, ...Colors.accents],
-                isExpanded: false,
-                onColorSelected: (_color) {
-                  _brush.color = _color;
-                  _colorController.text = _color.toHex();
-                },
-              )
-            : const SizedBox()
-      ],
-    );
+          _tool.activeTool == Tool.brush
+              ? Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: maxPadding,
+                        top: maxPadding,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const DrawerSubTitle("Active Color"),
+                          Row(
+                            children: [
+                              ColorCard(
+                                  color: _brushNotifier.color,
+                                  size: 35,
+                                  isSelected: false),
+                              ColorField(
+                                controller: _colorController,
+                                onTap: () {},
+                                onChange: (newColor) {
+                                  try {
+                                    if (newColor.isNotEmpty) {
+                                      _brushNotifier.color =
+                                          newColor.hexToColor();
+                                    }
+                                  } catch (e) {
+                                    print(e);
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const DrawerSubTitle('Recents'),
+                    SizedBox(
+                      height: length == 0 ? 0 : 50,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(left: 16),
+                        itemCount: length,
+                        itemBuilder: (context, index) {
+                          final recents = _brushNotifier.recents;
+                          return InkWell(
+                            onTap: () {
+                              final _recentColor = recents[index];
+                              _brushNotifier.color = _recentColor;
+                              _colorController.text = _recentColor.toHex();
+                            },
+                            child: Container(
+                              height: 30,
+                              width: 30,
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                color: recents[index],
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      // width: 200,
+                    ),
+                    ColorSelector(
+                      selectedColor: _brushNotifier.color,
+                      title: 'Colors',
+                      colors: const [Colors.black, ...Colors.accents],
+                      isExpanded: false,
+                      onColorSelected: (_color) {
+                        _brushNotifier.color = _color;
+                        _colorController.text = _color.toHex();
+                      },
+                    )
+                  ],
+                )
+              : const SizedBox()
+        ],
+      );
+    });
   }
 }
 

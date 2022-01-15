@@ -19,6 +19,7 @@ class CanvasNotifier extends ChangeNotifier {
   Color get color => _color;
 
   set color(Color value) {
+    if (_color == value) return;
     _color = value;
     if (!_recents.contains(value)) {
       _recents.insert(0, value);
