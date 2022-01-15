@@ -412,7 +412,7 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
     return Column(
       children: [
         BrushSizer(
-          sliderMax: _tool.activeTool == Tool.eraser ? 20 : 10,
+          sliderMax: 20,
           sliderMin: 1.0,
           isEraser: _tool.activeTool == Tool.eraser ? true : false,
           sliderValue:
@@ -425,15 +425,17 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
             }
           },
         ),
-        ColorSelector(
-          selectedColor: _brush.color,
-          title: 'Colors',
-          colors: const [Colors.black, ...Colors.accents],
-          isExpanded: false,
-          onColorSelected: (_color) {
-            _brush.color = _color;
-          },
-        )
+        _tool.activeTool == Tool.brush
+            ? ColorSelector(
+                selectedColor: _brush.color,
+                title: 'Colors',
+                colors: const [Colors.black, ...Colors.accents],
+                isExpanded: false,
+                onColorSelected: (_color) {
+                  _brush.color = _color;
+                },
+              )
+            : const SizedBox()
       ],
     );
   }
@@ -455,10 +457,7 @@ class BrushSizer extends StatelessWidget {
   final Function(double)? onChange;
   @override
   Widget build(BuildContext context) {
-    // final _brush = Provider.of<BrushNotifier>(context);
-    // final size = isEraser ? _brush.eraserSize : _brush.size;
-    final circleSize = sliderValue.clamp(4.0, 20.0);
-    //  <= 5 ? sliderValue * 2.5 : sliderValue * 1.5;
+    final circleSize = sliderValue.clamp(4.0, 30.0);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
