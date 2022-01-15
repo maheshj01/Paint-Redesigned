@@ -135,7 +135,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const DrawerSubTitle("Canvas Aspect Ratio"),
+          const DrawerSubTitle("Aspect Ratio"),
           Wrap(
             children: [
               for (var i = 0; i < _length; i++)
@@ -163,18 +163,26 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const DrawerSubTitle("Active Color"),
-                ColorField(
-                  controller: _colorController,
-                  onTap: () {},
-                  onChange: (newColor) {
-                    try {
-                      if (newColor.isNotEmpty) {
-                        _toolbarProvider.color = newColor.hexToColor();
-                      }
-                    } catch (e) {
-                      print(e);
-                    }
-                  },
+                Row(
+                  children: [
+                    ColorCard(
+                        color: _toolbarProvider.color,
+                        size: 35,
+                        isSelected: false),
+                    ColorField(
+                      controller: _colorController,
+                      onTap: () {},
+                      onChange: (newColor) {
+                        try {
+                          if (newColor.isNotEmpty) {
+                            _toolbarProvider.color = newColor.hexToColor();
+                          }
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                    ),
+                  ],
                 )
               ],
             ),
@@ -299,11 +307,13 @@ class ColorCard extends StatelessWidget {
       {Key? key,
       required this.color,
       required this.isSelected,
+      this.size = 48.0,
       this.child,
       this.onTap})
       : super(key: key);
   final Function(Color)? onTap;
   final Color color;
+  final double size;
   final bool isSelected;
   final Widget? child;
 
@@ -321,8 +331,8 @@ class ColorCard extends StatelessWidget {
                 child: InkWell(
                   onTap: () => onTap!(color),
                   child: Container(
-                    width: 48,
-                    height: 48,
+                    width: size,
+                    height: size,
                     decoration: BoxDecoration(
                       color: color,
                       borderRadius: BorderRadius.circular(8.0),
@@ -404,12 +414,24 @@ class PaintToolExplorer extends StatefulWidget {
 
 class _PaintToolExplorerState extends State<PaintToolExplorer> {
   late BrushNotifier _brush;
+  late TextEditingController _colorController;
+
+  @override
+  void initState() {
+    super.initState();
+    _colorController = TextEditingController();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      _colorController.text = _brush.color.toHex();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     _brush = Provider.of<BrushNotifier>(context, listen: true);
     final _tool = Provider.of<ToolController>(context, listen: true);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         BrushSizer(
           sliderMax: 20,
@@ -425,6 +447,36 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
             }
           },
         ),
+        Padding(
+          padding: const EdgeInsets.only(
+            right: maxPadding,
+            top: maxPadding,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const DrawerSubTitle("Active Color"),
+              Row(
+                children: [
+                  ColorCard(color: _brush.color, size: 35, isSelected: false),
+                  ColorField(
+                    controller: _colorController,
+                    onTap: () {},
+                    onChange: (newColor) {
+                      try {
+                        if (newColor.isNotEmpty) {
+                          _brush.color = newColor.hexToColor();
+                        }
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
         _tool.activeTool == Tool.brush
             ? ColorSelector(
                 selectedColor: _brush.color,
@@ -433,6 +485,7 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
                 isExpanded: false,
                 onColorSelected: (_color) {
                   _brush.color = _color;
+                  _colorController.text = _color.toHex();
                 },
               )
             : const SizedBox()
