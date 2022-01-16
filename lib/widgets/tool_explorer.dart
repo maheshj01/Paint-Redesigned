@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:paint_redesigned/background_painter.dart';
 import 'package:paint_redesigned/constants/const.dart';
 import 'package:paint_redesigned/models/models.dart';
 import 'package:paint_redesigned/widgets/widgets.dart';
@@ -174,11 +175,12 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
             height: 50,
             child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(left: maxPadding),
+                padding: const EdgeInsets.symmetric(horizontal: maxPadding),
                 itemBuilder: (context, index) {
                   final background = indexToBackground(index);
                   return BackgroundCard(
                     index: index,
+                    isSelected: _canvasNotifier.background == background,
                     onTap: () {
                       _canvasNotifier.background = background;
                     },
@@ -280,23 +282,38 @@ class BackgroundCard extends StatelessWidget {
       required this.background,
       required this.index,
       this.child,
+      this.isSelected = false,
       this.onTap})
       : super(key: key);
 
   final CanvasBackground background;
   final int index;
   Function? onTap;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => onTap!(),
-      child: Container(
-          height: 40,
-          width: 60,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          // color: Colors.accents[index].withOpacity(0.2),
-          child: child),
+      child: SizedBox(
+        height: 40,
+        width: 80,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+                margin: const EdgeInsets.symmetric(horizontal: standardPadding),
+                // color: Colors.accents[index].withOpacity(0.2),
+                child: child),
+            isSelected
+                ? const Icon(
+                    Icons.check,
+                    color: Colors.black,
+                  )
+                : const SizedBox(),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -316,83 +333,6 @@ Widget? getPainter(CanvasBackground background) {
         color: Colors.white,
       );
   }
-}
-
-class GridPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-    final width = size.width;
-    final height = size.height;
-    const count = 4;
-    final step = size.width / count;
-    for (int i = 0; i <= count; i++) {
-      final x = step * i;
-      canvas.drawLine(Offset(x, 0.0), Offset(x, height), paint);
-    }
-    for (int i = 0; i <= count; i++) {
-      final y = step * i;
-      canvas.drawLine(Offset(0.0, y), Offset(width, y), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
-}
-
-class DotsPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.fill;
-    const countX = 4;
-    const countY = 4;
-    final step = size.width / countX;
-    for (int i = 0; i <= countX; i++) {
-      final x = step * i;
-      for (int j = 0; j <= countY; j++) {
-        final y = step * j;
-        canvas.drawCircle(Offset(x, y), 1.5, paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
-}
-
-class LinesPainter extends CustomPainter {
-  Axis direction;
-  LinesPainter(this.direction);
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.fill;
-    final width = size.width;
-    final height = size.height;
-    const count = 10;
-    final step = size.width / count;
-
-    for (int i = 0; i <= count; i++) {
-      if (direction == Axis.horizontal) {
-        final y = step * i;
-        canvas.drawLine(Offset(0.0, y), Offset(width, y), paint);
-      } else {
-        final x = step * i;
-        canvas.drawLine(Offset(x, 0.0), Offset(x, height), paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(LinesPainter oldDelegate) => true;
 }
 
 class DrawerSubTitle extends StatelessWidget {
