@@ -301,7 +301,7 @@ class _PathHistory {
       ..style = PaintingStyle.fill;
     const countX = 20;
     const countY = 20;
-    final step = size.width / countX;
+    final step = max(size.width, size.height) / countX;
     for (int i = 0; i <= countX; i++) {
       final x = step * i;
       for (int j = 0; j <= countY; j++) {
@@ -317,8 +317,9 @@ class _PathHistory {
       ..strokeWidth = 1.0
       ..style = PaintingStyle.fill;
     final width = size.width;
+    final height = size.height;
     const count = 20;
-    final step = size.width / count;
+    final step = max(width, height) / count;
     for (int i = 0; i <= count; i++) {
       final y = step * i;
       canvas.drawLine(Offset(0.0, y), Offset(width, y), paint);
@@ -332,8 +333,8 @@ class _PathHistory {
       ..style = PaintingStyle.fill;
     final width = size.width;
     final height = size.height;
-    final count = 20;
-    final step = size.width / count;
+    const count = 20;
+    final step = max(width, height) / count;
     for (int i = 0; i <= count; i++) {
       final x = step * i;
       canvas.drawLine(Offset(x, 0.0), Offset(x, height), paint);
