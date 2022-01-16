@@ -33,8 +33,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<CanvasNotifier>(create: (_) => CanvasNotifier()),
         ChangeNotifierProvider<BrushNotifier>(create: (_) => BrushNotifier()),
         ChangeNotifierProvider<ToolController>(create: (_) => ToolController()),
-        // ChangeNotifierProvider<MessengerController>(
-        //     create: (_) => MessengerController()),
       ],
       child: MaterialApp(
           title: 'Flutter Canvas',

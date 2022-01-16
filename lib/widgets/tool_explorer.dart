@@ -181,6 +181,8 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
                   return BackgroundCard(
                     index: index,
                     isSelected: _canvasNotifier.background == background,
+                    // color: _canvasNotifier.color,
+                    color: Colors.accents[index].withOpacity(0.5),
                     onTap: () {
                       _canvasNotifier.background = background;
                     },
@@ -282,12 +284,14 @@ class BackgroundCard extends StatelessWidget {
       required this.background,
       required this.index,
       this.child,
+      this.color,
       this.isSelected = false,
       this.onTap})
       : super(key: key);
 
   final CanvasBackground background;
   final int index;
+  final Color? color;
   Function? onTap;
   final bool isSelected;
 
@@ -303,7 +307,7 @@ class BackgroundCard extends StatelessWidget {
           children: [
             Container(
                 margin: const EdgeInsets.symmetric(horizontal: standardPadding),
-                // color: Colors.accents[index].withOpacity(0.2),
+                color: color,
                 child: child),
             isSelected
                 ? const Icon(
@@ -425,7 +429,11 @@ class ColorCard extends StatelessWidget {
             child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: InkWell(
-                  onTap: () => onTap!(color),
+                  onTap: () {
+                    if (onTap != null) {
+                      onTap!(color);
+                    }
+                  },
                   child: Container(
                     width: size,
                     height: size,
