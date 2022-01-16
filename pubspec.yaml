@@ -1,4 +1,4 @@
-name: canvas
+name: paint_redesigned
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -18,19 +18,29 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.15.0 <3.0.0'
 
 dependencies:
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding.git
+      path: plugins/window_size
+  menubar:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding.git
+      path: plugins/menubar
+
   flutter:
     sdk: flutter
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.4
-  flutter_colorpicker: ^1.0.3
-  universal_html: ^2.0.8
   provider: ^6.0.1
+  font_awesome_flutter: ^9.2.0
+  path_provider: ^2.0.8
 
 dev_dependencies:
+  flutter_lints: ^1.0.4
   flutter_test:
     sdk: flutter
 
