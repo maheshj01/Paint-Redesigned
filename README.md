@@ -8,8 +8,8 @@ A Paint app, targeting Desktop, built proudly with Flutter 💙. You are welcome
 - Support Keyboard shortcuts
 - Saves Last 5 Recent colors
 - Download Canvas to Image
-- Runs on Windows, Desktop, MacOS (Thanks to Flutter)
 - Precisely Zoom to any corner of the canvas
+- Runs exactly the same on Windows, Linux, MacOS (Thanks to Flutter)
 
 A sneak peek of the app
 
