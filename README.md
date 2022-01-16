@@ -1,6 +1,29 @@
-# Paint Redesigned [Live Version Here](https://maheshmnj.github.io/paint/#/)
+# Paint Redesigned
 
 A Paint app, targeting Desktop, built proudly with Flutter 💙. You are welcome to contribute and make features requests or file Issues. 
+
+### Features
+- Basic features such as (brush/eraser size, custom color for brush and background)
+- Undo-Redo paint Strokes
+- Support Keyboard shortcuts
+- Saves Last 5 Recent colors
+- Download Canvas to Image
+- Runs on Windows, Desktop, MacOS (Thanks to Flutter)
+
+A sneak peek of the app
+
+
+### v1.0.0
+
+https://user-images.githubusercontent.com/31410839/149663917-5f71d8a5-736e-4248-ba96-c2a669ab8758.mov
+
+### Custom Background
+
+https://user-images.githubusercontent.com/31410839/149664318-c9b55f28-cd42-49b1-a255-db45ef76bc19.mov
+
+
+
+### v0.1.0 (Initial Release)
 
 ![ezgif com-video-to-gif (1)](https://user-images.githubusercontent.com/31410839/82818971-36958e80-9ebd-11ea-91e3-f1b556a7901c.gif)
 
