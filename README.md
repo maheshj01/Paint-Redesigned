@@ -9,6 +9,7 @@ A Paint app, targeting Desktop, built proudly with Flutter 💙. You are welcome
 - Saves Last 5 Recent colors
 - Download Canvas to Image
 - Runs on Windows, Desktop, MacOS (Thanks to Flutter)
+- Precisely Zoom to any corner of the canvas
 
 A sneak peek of the app
 
