@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/models/models.dart';
 
@@ -280,8 +282,8 @@ class _PathHistory {
       ..style = PaintingStyle.stroke;
     final width = size.width;
     final height = size.height;
-    final count = 20;
-    final step = size.width / count;
+    const count = 20;
+    final step = max(size.height, size.width) / count;
     for (int i = 0; i <= count; i++) {
       final x = step * i;
       canvas.drawLine(Offset(x, 0.0), Offset(x, height), paint);
