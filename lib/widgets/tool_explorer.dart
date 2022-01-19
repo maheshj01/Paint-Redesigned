@@ -66,7 +66,7 @@ class _ToolExplorerState extends State<ToolExplorer>
         color: drawerBackgroundColor,
         child: Consumer<ToolController>(
             builder: (context, ToolController tool, Widget? child) {
-          if (tool.activeTool == Tool.canvas) {
+          if (tool.animateDirection == AnimateDirection.left) {
             _tween.begin = -100.0;
           } else {
             _tween.begin = 100.0;
