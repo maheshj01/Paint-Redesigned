@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:paint_redesigned/canvas.dart';
@@ -45,6 +46,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+enum FileDrag { enter, exit, drop }
 
 class PaintHome extends StatefulWidget {
   const PaintHome({Key? key}) : super(key: key);
@@ -187,11 +190,13 @@ class _CanvasBuilderState extends State<CanvasBuilder>
     _messengerController.curve = Curves.easeInOut;
   }
 
-  final imageNotifier = ValueNotifier<bool>(false);
+  final _fileDragNotifier = ValueNotifier<FileDrag?>(null);
+
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor = Colors.grey[300]!;
     final _toolNotifier = Provider.of<ToolController>(context, listen: false);
+    final _canvasNotifier = Provider.of<CanvasNotifier>(context, listen: false);
     _canvasController = CanvasController();
     void onToolChange(Tool newTool) {
       switch (newTool) {
@@ -322,15 +327,58 @@ class _CanvasBuilderState extends State<CanvasBuilder>
 
                                       /// Todo: ValueNotifier not in use right now
                                       /// to be used for image manipualation
-                                      child: ValueListenableBuilder(
-                                        valueListenable: imageNotifier,
-                                        builder: (context, bool takingPicture,
+                                      child: ValueListenableBuilder<FileDrag?>(
+                                        valueListenable: _fileDragNotifier,
+                                        builder: (context, FileDrag? _fileDrag,
                                             Widget? child) {
                                           return RepaintBoundary(
                                             key: key,
-                                            child: CanvasWidget(
-                                                canvasController:
-                                                    _canvasController),
+                                            child: DropTarget(
+                                              onDragEntered: (x) {
+                                                _fileDragNotifier.value =
+                                                    FileDrag.enter;
+                                              },
+                                              onDragExited: (x) {
+                                                _fileDragNotifier.value =
+                                                    FileDrag.exit;
+                                              },
+                                              onDragDone: (x) async {
+                                                _fileDragNotifier.value =
+                                                    FileDrag.drop;
+                                                final path = x.files.first.path;
+                                                final ui.Image? image =
+                                                    await decodeImageFromList(
+                                                        File('$path')
+                                                            .readAsBytesSync());
+                                                _canvasController.image = image;
+                                                _canvasNotifier.background =
+                                                    CanvasBackground.image;
+                                              },
+                                              child: Stack(
+                                                children: [
+                                                  CanvasWidget(
+                                                      canvasController:
+                                                          _canvasController),
+                                                  if (_fileDrag ==
+                                                      FileDrag.enter)
+                                                    Positioned.fill(
+                                                      child: Container(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.2),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            'Drop Image',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 20),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
                                           );
                                         },
                                       ));

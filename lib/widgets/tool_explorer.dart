@@ -124,7 +124,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
   CanvasBackground indexToBackground(int index) {
     switch (index) {
       case 0:
-        return CanvasBackground.none;
+        return CanvasBackground.plain;
       case 1:
         return CanvasBackground.dots;
       case 2:
@@ -177,20 +177,21 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: maxPadding),
                 itemBuilder: (context, index) {
-                  final background = indexToBackground(index);
+                  final background = CanvasBackground.values.elementAt(index);
                   return BackgroundCard(
                     index: index,
                     isSelected: _canvasNotifier.background == background,
                     // color: _canvasNotifier.color,
                     color: Colors.accents[index].withOpacity(0.5),
                     onTap: () {
+                      print(background);
                       _canvasNotifier.background = background;
                     },
                     background: _canvasNotifier.background,
                     child: getPainter(background),
                   );
                 },
-                itemCount: 5),
+                itemCount: CanvasBackground.values.length),
           ),
           Padding(
             padding: const EdgeInsets.only(
@@ -332,6 +333,12 @@ Widget? getPainter(CanvasBackground background) {
       return CustomPaint(painter: LinesPainter(Axis.horizontal));
     case CanvasBackground.vlines:
       return CustomPaint(painter: LinesPainter(Axis.vertical));
+    case CanvasBackground.image:
+      return Container(
+        alignment: Alignment.center,
+        color: Colors.white,
+        child: const Icon(Icons.image, size: 35),
+      );
     default:
       return Container(
         color: Colors.white,

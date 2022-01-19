@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/models/models.dart';
 
@@ -68,9 +68,23 @@ class _CanvasWidgetState extends State<CanvasWidget> {
 
 class CanvasController extends ChangeNotifier {
   Color _color = Colors.black;
+
   Color _backgroundColor = Colors.white;
+
   double _strokeWidth = 4.0;
+
   bool _isEraseMode = false;
+
+  ui.Image? _image;
+
+  ui.Image? get image => _image;
+
+  set image(ui.Image? value) {
+    _image = value;
+    _background = CanvasBackground.image;
+    _updatePaint();
+    notifyListeners();
+  }
 
   final _PathHistory _pathHistory = _PathHistory();
 
@@ -84,11 +98,15 @@ class CanvasController extends ChangeNotifier {
 
   bool get isUndoEmpty => _pathHistory.isUndoEmpty;
 
-  CanvasBackground _background = CanvasBackground.none;
+  CanvasBackground _background = CanvasBackground.plain;
 
   CanvasBackground get background => _background;
 
   set background(CanvasBackground value) {
+    if (value != CanvasBackground.image && _image != null) {
+      _image = null;
+    }
+    print('background change $value');
     _background = value;
     _updatePaint();
     notifyListeners();
@@ -136,6 +154,9 @@ class CanvasController extends ChangeNotifier {
 
     _pathHistory._paint = paint;
     _pathHistory._backgroundPaint = backGroundPaint;
+    if (image != null) {
+      _pathHistory.image = image;
+    }
     _pathHistory.background = background;
     notifyListeners();
   }
@@ -180,12 +201,25 @@ class CanvasPainter extends CustomPainter {
 
 class _PathHistory {
   final List<MapEntry<Path, Paint>> _paths;
+
   final List<MapEntry<Path, Paint>> _undoHistory;
+
   bool _isUndo = false;
+
   Paint _paint;
+
   Paint _backgroundPaint;
 
-  CanvasBackground _background = CanvasBackground.none;
+  CanvasBackground _background = CanvasBackground.plain;
+
+  ui.Image? _image;
+
+  ui.Image? get image => _image;
+
+  set image(ui.Image? value) {
+    _image = value;
+    _background = CanvasBackground.image;
+  }
 
   CanvasBackground get background => _background;
 
@@ -251,12 +285,13 @@ class _PathHistory {
 
   void draw(Canvas canvas, Size size) {
     canvas.saveLayer(Offset.zero & size, Paint());
+    // drawImage(canvas, size);
+
     for (MapEntry<Path, Paint> path in _paths) {
       Paint p = path.value;
       canvas.drawPath(path.key, p);
     }
-    canvas.drawRect(
-        Rect.fromLTWH(0.0, 0.0, size.width, size.height), _backgroundPaint);
+
     if (_background == CanvasBackground.grid) {
       drawGrid(canvas, size);
     } else if (background == CanvasBackground.dots) {
@@ -265,7 +300,12 @@ class _PathHistory {
       drawHLines(canvas, size);
     } else if (background == CanvasBackground.vlines) {
       drawVlines(canvas, size);
+    } else if (background == CanvasBackground.image) {
+      drawImage(canvas, size);
     } else {
+      /// Prevent drawing out of canvas
+      canvas.drawRect(
+          Rect.fromLTWH(0.0, 0.0, size.width, size.height), _backgroundPaint);
       drawNone(canvas, size);
     }
     canvas.restore();
@@ -273,6 +313,21 @@ class _PathHistory {
 
   void drawNone(Canvas canvas, Size size) {
     // do nothing
+  }
+
+  void drawImage(Canvas canvas, Size size) {
+    if (image == null) return;
+    canvas.drawImageNine(
+        image!,
+        Rect.fromLTWH(0.0, 0.0, size.width, size.height),
+        Rect.fromLTWH(0.0, 0.0, size.width, size.height),
+        _backgroundPaint);
+
+    /// TODO: Image is not fully painted
+    // paintImage(
+    //     canvas: canvas,
+    //     rect: Rect.fromLTWH(0.0, 0.0, size.width, size.height),
+    //     image: image!);
   }
 
   void drawGrid(Canvas canvas, Size size) {
