@@ -7,8 +7,9 @@ A Paint app, targeting Desktop, built proudly with Flutter 💙. You are welcome
 - Undo-Redo paint Strokes
 - Support Keyboard shortcuts
 - Saves Last 5 Recent colors
-- Download Canvas to Image
+- Download Canvas output to Image
 - Precisely Zoom to any corner of the canvas
+- Drag and Drop image on to the canvas to draw on image
 - Runs exactly the same on Windows, Linux, MacOS (Thanks to Flutter)
 
 A sneak peek of the app
@@ -20,8 +21,7 @@ https://user-images.githubusercontent.com/31410839/149663917-5f71d8a5-736e-4248-
 
 ### Custom Background
 
-https://user-images.githubusercontent.com/31410839/149664318-c9b55f28-cd42-49b1-a255-db45ef76bc19.mov
-
+https://user-images.githubusercontent.com/31410839/150649723-eef33c53-3d8e-4e6e-aa4c-6c4181703e79.mov
 
 
 ### v0.1.0 (Initial Release)
