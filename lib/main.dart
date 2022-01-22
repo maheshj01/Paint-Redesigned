@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:paint_redesigned/canvas.dart';
@@ -45,6 +47,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+enum FileDrag { enter, exit, drop }
 
 class PaintHome extends StatefulWidget {
   const PaintHome({Key? key}) : super(key: key);
@@ -187,11 +191,30 @@ class _CanvasBuilderState extends State<CanvasBuilder>
     _messengerController.curve = Curves.easeInOut;
   }
 
-  final imageNotifier = ValueNotifier<bool>(false);
+  final _fileDragNotifier = ValueNotifier<FileDrag?>(null);
+
+  Future<ui.Image> loadUiImage(String imageAssetPath) async {
+    final ByteData data = await rootBundle.load(imageAssetPath);
+    final Completer<ui.Image> completer = Completer();
+    ui.decodeImageFromList(Uint8List.view(data.buffer), (ui.Image img) {
+      return completer.complete(img);
+    });
+    return completer.future;
+  }
+
+  int getHeight(String aspectRatio) {
+    final split = aspectRatio.split(':');
+    final height = int.parse(split[1]);
+    final width = int.parse(split[0]);
+    return (700 * height / width).toInt();
+  }
+
+  final canvasKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor = Colors.grey[300]!;
     final _toolNotifier = Provider.of<ToolController>(context, listen: false);
+    final _canvasNotifier = Provider.of<CanvasNotifier>(context, listen: false);
     _canvasController = CanvasController();
     void onToolChange(Tool newTool) {
       switch (newTool) {
@@ -287,6 +310,7 @@ class _CanvasBuilderState extends State<CanvasBuilder>
                       child: Consumer<CanvasNotifier>(builder:
                           (context, CanvasNotifier canvas, Widget? child) {
                         return AspectRatio(
+                          key: canvasKey,
                           aspectRatio: aspectRatios[canvas.aspectRatio]!,
                           child: Container(
                             color: backgroundColor,
@@ -322,15 +346,71 @@ class _CanvasBuilderState extends State<CanvasBuilder>
 
                                       /// Todo: ValueNotifier not in use right now
                                       /// to be used for image manipualation
-                                      child: ValueListenableBuilder(
-                                        valueListenable: imageNotifier,
-                                        builder: (context, bool takingPicture,
+                                      child: ValueListenableBuilder<FileDrag?>(
+                                        valueListenable: _fileDragNotifier,
+                                        builder: (context, FileDrag? _fileDrag,
                                             Widget? child) {
                                           return RepaintBoundary(
                                             key: key,
-                                            child: CanvasWidget(
-                                                canvasController:
-                                                    _canvasController),
+                                            child: DropTarget(
+                                              onDragEntered: (x) {
+                                                _fileDragNotifier.value =
+                                                    FileDrag.enter;
+                                              },
+                                              onDragExited: (x) {
+                                                _fileDragNotifier.value =
+                                                    FileDrag.exit;
+                                              },
+                                              onDragDone: (x) async {
+                                                _fileDragNotifier.value =
+                                                    FileDrag.drop;
+                                                final path = x.files.first.path;
+                                                // final image =
+                                                //     await loadUiImage(path);
+                                                final imageBytes = File('$path')
+                                                    .readAsBytesSync();
+                                                // final ui.Image? image =
+                                                //     await decodeImageFromList(
+                                                //       imageBytes);
+                                                final codec = await ui
+                                                    .instantiateImageCodec(
+                                                  imageBytes,
+                                                  targetHeight: getHeight(
+                                                      canvas.aspectRatio),
+                                                  targetWidth: 700,
+                                                );
+                                                final image =
+                                                    (await codec.getNextFrame())
+                                                        .image;
+                                                _canvasController.image = image;
+                                                _canvasNotifier.background =
+                                                    CanvasBackground.image;
+                                              },
+                                              child: Stack(
+                                                children: [
+                                                  CanvasWidget(
+                                                      canvasController:
+                                                          _canvasController),
+                                                  if (_fileDrag ==
+                                                      FileDrag.enter)
+                                                    Positioned.fill(
+                                                      child: Container(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.2),
+                                                        child: const Center(
+                                                          child: Text(
+                                                            'Drop Image',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 20),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
                                           );
                                         },
                                       ));
