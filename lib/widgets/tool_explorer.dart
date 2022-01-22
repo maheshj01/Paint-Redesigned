@@ -271,6 +271,9 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
               _colorController.text = _color.toHex();
               _canvasNotifier.color = _color;
             },
+          ),
+          const SizedBox(
+            height: 80,
           )
         ],
       ),
@@ -642,7 +645,10 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
                     )
                   ],
                 )
-              : const SizedBox()
+              : const SizedBox(),
+          const SizedBox(
+            height: 80,
+          )
         ],
       );
     });

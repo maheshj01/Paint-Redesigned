@@ -317,11 +317,7 @@ class _PathHistory {
 
   void drawImage(Canvas canvas, Size size) {
     if (image == null) return;
-    canvas.drawImageNine(
-        image!,
-        Rect.fromLTWH(0.0, 0.0, size.width, size.height),
-        Rect.fromLTWH(0.0, 0.0, size.width, size.height),
-        _backgroundPaint);
+    canvas.drawImage(image!, Offset.zero, _backgroundPaint);
 
     /// TODO: Image is not fully painted
     // paintImage(

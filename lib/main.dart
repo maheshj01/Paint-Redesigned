@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -192,6 +193,23 @@ class _CanvasBuilderState extends State<CanvasBuilder>
 
   final _fileDragNotifier = ValueNotifier<FileDrag?>(null);
 
+  Future<ui.Image> loadUiImage(String imageAssetPath) async {
+    final ByteData data = await rootBundle.load(imageAssetPath);
+    final Completer<ui.Image> completer = Completer();
+    ui.decodeImageFromList(Uint8List.view(data.buffer), (ui.Image img) {
+      return completer.complete(img);
+    });
+    return completer.future;
+  }
+
+  int getHeight(String aspectRatio) {
+    final split = aspectRatio.split(':');
+    final height = int.parse(split[1]);
+    final width = int.parse(split[0]);
+    return (700 * height / width).toInt();
+  }
+
+  final canvasKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor = Colors.grey[300]!;
@@ -292,6 +310,7 @@ class _CanvasBuilderState extends State<CanvasBuilder>
                       child: Consumer<CanvasNotifier>(builder:
                           (context, CanvasNotifier canvas, Widget? child) {
                         return AspectRatio(
+                          key: canvasKey,
                           aspectRatio: aspectRatios[canvas.aspectRatio]!,
                           child: Container(
                             color: backgroundColor,
@@ -346,10 +365,23 @@ class _CanvasBuilderState extends State<CanvasBuilder>
                                                 _fileDragNotifier.value =
                                                     FileDrag.drop;
                                                 final path = x.files.first.path;
-                                                final ui.Image? image =
-                                                    await decodeImageFromList(
-                                                        File('$path')
-                                                            .readAsBytesSync());
+                                                // final image =
+                                                //     await loadUiImage(path);
+                                                final imageBytes = File('$path')
+                                                    .readAsBytesSync();
+                                                // final ui.Image? image =
+                                                //     await decodeImageFromList(
+                                                //       imageBytes);
+                                                final codec = await ui
+                                                    .instantiateImageCodec(
+                                                  imageBytes,
+                                                  targetHeight: getHeight(
+                                                      canvas.aspectRatio),
+                                                  targetWidth: 700,
+                                                );
+                                                final image =
+                                                    (await codec.getNextFrame())
+                                                        .image;
                                                 _canvasController.image = image;
                                                 _canvasNotifier.background =
                                                     CanvasBackground.image;
