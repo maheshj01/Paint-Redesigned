@@ -110,7 +110,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
   void initState() {
     super.initState();
     _colorController = TextEditingController();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _colorController.text = _canvasNotifier.color.toHex();
     });
   }
@@ -451,16 +451,14 @@ class ColorCard extends StatelessWidget {
                       color: color,
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: child != null
-                        ? child
-                        : isSelected
+                    child: child ?? (isSelected
                             ? Icon(
                                 Icons.check,
                                 color: color == Colors.white
                                     ? Colors.black
                                     : Colors.white,
                               )
-                            : null,
+                            : null),
                   ),
                 )),
           );
@@ -534,7 +532,7 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
   void initState() {
     super.initState();
     _colorController = TextEditingController();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _colorController.text = _brush.color.toHex();
     });
   }

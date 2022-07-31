@@ -206,7 +206,7 @@ class _CanvasBuilderState extends State<CanvasBuilder>
     final split = aspectRatio.split(':');
     final height = int.parse(split[1]);
     final width = int.parse(split[0]);
-    return (700 * height / width).toInt();
+    return 700 * height ~/ width;
   }
 
   final canvasKey = GlobalKey();
@@ -228,7 +228,7 @@ class _CanvasBuilderState extends State<CanvasBuilder>
           break;
         case Tool.download:
           generateImageBytes();
-          WidgetsBinding.instance!.addPostFrameCallback((z) {});
+          WidgetsBinding.instance.addPostFrameCallback((z) {});
           break;
         case Tool.undo:
           _canvasController.undo();
@@ -365,9 +365,10 @@ class _CanvasBuilderState extends State<CanvasBuilder>
                                                 _fileDragNotifier.value =
                                                     FileDrag.drop;
                                                 final path = x.files.first.path;
+                                                print('path: $path');
                                                 // final image =
                                                 //     await loadUiImage(path);
-                                                final imageBytes = File('$path')
+                                                final imageBytes = File(path)
                                                     .readAsBytesSync();
                                                 // final ui.Image? image =
                                                 //     await decodeImageFromList(
