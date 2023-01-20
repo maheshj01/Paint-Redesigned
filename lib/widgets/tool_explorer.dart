@@ -66,7 +66,7 @@ class _ToolExplorerState extends State<ToolExplorer>
         color: drawerBackgroundColor,
         child: Consumer<ToolController>(
             builder: (context, ToolController tool, Widget? child) {
-          if (tool.activeTool == Tool.canvas) {
+          if (tool.animateDirection == AnimateDirection.left) {
             _tween.begin = -100.0;
           } else {
             _tween.begin = 100.0;
@@ -110,7 +110,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
   void initState() {
     super.initState();
     _colorController = TextEditingController();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _colorController.text = _canvasNotifier.color.toHex();
     });
   }
@@ -124,7 +124,7 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
   CanvasBackground indexToBackground(int index) {
     switch (index) {
       case 0:
-        return CanvasBackground.none;
+        return CanvasBackground.plain;
       case 1:
         return CanvasBackground.dots;
       case 2:
@@ -177,18 +177,21 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: maxPadding),
                 itemBuilder: (context, index) {
-                  final background = indexToBackground(index);
+                  final background = CanvasBackground.values.elementAt(index);
                   return BackgroundCard(
                     index: index,
                     isSelected: _canvasNotifier.background == background,
+                    // color: _canvasNotifier.color,
+                    color: Colors.accents[index].withOpacity(0.5),
                     onTap: () {
+                      print(background);
                       _canvasNotifier.background = background;
                     },
                     background: _canvasNotifier.background,
                     child: getPainter(background),
                   );
                 },
-                itemCount: 5),
+                itemCount: CanvasBackground.values.length),
           ),
           Padding(
             padding: const EdgeInsets.only(
@@ -268,6 +271,9 @@ class _CanvasToolExplorerState extends State<CanvasToolExplorer> {
               _colorController.text = _color.toHex();
               _canvasNotifier.color = _color;
             },
+          ),
+          const SizedBox(
+            height: 80,
           )
         ],
       ),
@@ -282,12 +288,14 @@ class BackgroundCard extends StatelessWidget {
       required this.background,
       required this.index,
       this.child,
+      this.color,
       this.isSelected = false,
       this.onTap})
       : super(key: key);
 
   final CanvasBackground background;
   final int index;
+  final Color? color;
   Function? onTap;
   final bool isSelected;
 
@@ -303,7 +311,7 @@ class BackgroundCard extends StatelessWidget {
           children: [
             Container(
                 margin: const EdgeInsets.symmetric(horizontal: standardPadding),
-                // color: Colors.accents[index].withOpacity(0.2),
+                color: color,
                 child: child),
             isSelected
                 ? const Icon(
@@ -328,6 +336,12 @@ Widget? getPainter(CanvasBackground background) {
       return CustomPaint(painter: LinesPainter(Axis.horizontal));
     case CanvasBackground.vlines:
       return CustomPaint(painter: LinesPainter(Axis.vertical));
+    case CanvasBackground.image:
+      return Container(
+        alignment: Alignment.center,
+        color: Colors.white,
+        child: const Icon(Icons.image, size: 35),
+      );
     default:
       return Container(
         color: Colors.white,
@@ -425,7 +439,11 @@ class ColorCard extends StatelessWidget {
             child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: InkWell(
-                  onTap: () => onTap!(color),
+                  onTap: () {
+                    if (onTap != null) {
+                      onTap!(color);
+                    }
+                  },
                   child: Container(
                     width: size,
                     height: size,
@@ -433,16 +451,14 @@ class ColorCard extends StatelessWidget {
                       color: color,
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: child != null
-                        ? child
-                        : isSelected
+                    child: child ?? (isSelected
                             ? Icon(
                                 Icons.check,
                                 color: color == Colors.white
                                     ? Colors.black
                                     : Colors.white,
                               )
-                            : null,
+                            : null),
                   ),
                 )),
           );
@@ -516,7 +532,7 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
   void initState() {
     super.initState();
     _colorController = TextEditingController();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _colorController.text = _brush.color.toHex();
     });
   }
@@ -627,7 +643,10 @@ class _PaintToolExplorerState extends State<PaintToolExplorer> {
                     )
                   ],
                 )
-              : const SizedBox()
+              : const SizedBox(),
+          const SizedBox(
+            height: 80,
+          )
         ],
       );
     });
