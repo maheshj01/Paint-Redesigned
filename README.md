@@ -34,7 +34,7 @@ https://user-images.githubusercontent.com/31410839/150649723-eef33c53-3d8e-4e6e-
 
 #### References: 
 
-- [Flutter Desktop Embedding Example](https://github.com/google/flutter-desktop-embedding/blob/4687840a19f23cff84f1bedeb6d24ac85abd99c8/testbed/lib/main.dart#L114)
+- [Flutter Desktop Embedding Example](https://github.com/google/flutter-desktop-embedding/blob/master/testbed/lib/main.dart)
 
 ### Contributors
 
