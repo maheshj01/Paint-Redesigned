@@ -3,6 +3,7 @@
 A Paint app, targeting Desktop, built proudly with Flutter 💙. You are welcome to contribute and make features requests or file Issues. 
 
 # [Try it out on the web](https://paintredesigned.netlify.app/#/)
+> Note that the web app deployed works with limited features as of today.
 
 ### Features
 - Basic features such as (brush/eraser size, custom color for brush and background)
