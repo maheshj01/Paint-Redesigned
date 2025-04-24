@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:paint_redesigned/background_painter.dart';
 import 'package:paint_redesigned/constants/const.dart';
 import 'package:paint_redesigned/models/models.dart';
+import 'package:paint_redesigned/utils/utils.dart';
 import 'package:paint_redesigned/widgets/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:paint_redesigned/utils/utils.dart';
 
 class ToolExplorer extends StatefulWidget {
   const ToolExplorer({Key? key}) : super(key: key);
@@ -363,7 +363,7 @@ class DrawerSubTitle extends StatelessWidget {
           text,
           style: Theme.of(context)
               .textTheme
-              .subtitle2!
+              .titleSmall!
               .copyWith(color: Colors.grey),
         ),
       ),

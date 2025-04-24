@@ -7,7 +7,7 @@ import Foundation
 
 import desktop_drop
 import menubar
-import path_provider_macos
+import path_provider_foundation
 import window_size
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

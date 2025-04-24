@@ -1,6 +1,6 @@
 {
-    "name": "Paint Redesigned",
-    "short_name": "Paint Redesigned",
+    "name": "paint_redesigned",
+    "short_name": "paint_redesigned",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
