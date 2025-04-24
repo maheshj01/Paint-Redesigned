@@ -7,14 +7,13 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
           channel: "stable"
+          flutter-version: '3.29.3'
       - run: flutter clean
       - run: flutter pub get
-      - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter build web --release
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3
