@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:paint_redesigned/models/models.dart';
 
@@ -49,15 +50,18 @@ class _CanvasWidgetState extends State<CanvasWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onPanStart: (startDetails) => _onStart(startDetails),
-        onPanUpdate: (updateDetails) => _onUpdateDetails(updateDetails),
-        onPanEnd: (downDetails) => onEnd(downDetails),
-        child: CustomPaint(
-          willChange: true,
-          painter: CanvasPainter(canvasController._pathHistory,
-              painterModel: canvasController),
-          child: Container(),
-        ));
+      onPanStart: (startDetails) => _onStart(startDetails),
+      onPanUpdate: (updateDetails) => _onUpdateDetails(updateDetails),
+      onPanEnd: (downDetails) => onEnd(downDetails),
+      child: CustomPaint(
+        willChange: true,
+        painter: CanvasPainter(
+          canvasController._pathHistory,
+          painterModel: canvasController,
+        ),
+        child: Container(),
+      ),
+    );
   }
 
   @override
@@ -106,7 +110,7 @@ class CanvasController extends ChangeNotifier {
     if (value != CanvasBackground.image && _image != null) {
       _image = null;
     }
-    print('background change $value');
+    // print('background change $value');
     _background = value;
     _updatePaint();
     notifyListeners();
@@ -188,7 +192,7 @@ class CanvasPainter extends CustomPainter {
 
   /// if the model updates paint will repaint
   CanvasPainter(this._path, {Listenable? painterModel})
-      : super(repaint: painterModel);
+    : super(repaint: painterModel);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -240,15 +244,17 @@ class _PathHistory {
   List<MapEntry<Path, Paint>> get paths => _paths;
 
   _PathHistory()
-      : _paths = <MapEntry<Path, Paint>>[],
-        _undoHistory = <MapEntry<Path, Paint>>[],
-        _backgroundPaint = Paint()
-          ..blendMode = BlendMode.dstOver
-          ..color = Colors.white,
-        _paint = Paint()
-          ..color = Colors.black
-          ..strokeWidth = 1.0
-          ..style = PaintingStyle.fill;
+    : _paths = <MapEntry<Path, Paint>>[],
+      _undoHistory = <MapEntry<Path, Paint>>[],
+      _backgroundPaint =
+          Paint()
+            ..blendMode = BlendMode.dstOver
+            ..color = Colors.white,
+      _paint =
+          Paint()
+            ..color = Colors.black
+            ..strokeWidth = 1.0
+            ..style = PaintingStyle.fill;
 
   void setBackgroundColor(Color backgroundColor) {
     _backgroundPaint.color = backgroundColor;
@@ -305,7 +311,9 @@ class _PathHistory {
     } else {
       /// Prevent drawing out of canvas
       canvas.drawRect(
-          Rect.fromLTWH(0.0, 0.0, size.width, size.height), _backgroundPaint);
+        Rect.fromLTWH(0.0, 0.0, size.width, size.height),
+        _backgroundPaint,
+      );
       drawNone(canvas, size);
     }
     canvas.restore();
@@ -327,10 +335,11 @@ class _PathHistory {
   }
 
   void drawGrid(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
+    final paint =
+        Paint()
+          ..color = Colors.black
+          ..strokeWidth = 1.0
+          ..style = PaintingStyle.stroke;
     final width = size.width;
     final height = size.height;
     const count = 20;
@@ -346,10 +355,11 @@ class _PathHistory {
   }
 
   void drawDots(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = Colors.black
+          ..strokeWidth = 1.0
+          ..style = PaintingStyle.fill;
     const countX = 20;
     const countY = 20;
     final step = max(size.width, size.height) / countX;
@@ -363,10 +373,11 @@ class _PathHistory {
   }
 
   void drawHLines(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = Colors.black
+          ..strokeWidth = 1.0
+          ..style = PaintingStyle.fill;
     final width = size.width;
     final height = size.height;
     const count = 20;
@@ -378,10 +389,11 @@ class _PathHistory {
   }
 
   void drawVlines(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = Colors.black
+          ..strokeWidth = 1.0
+          ..style = PaintingStyle.fill;
     final width = size.width;
     final height = size.height;
     const count = 20;
